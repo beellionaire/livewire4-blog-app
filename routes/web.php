@@ -12,7 +12,7 @@ Route::get('/blog', PostList::class)->name('blog.index');
 Route::livewire('/blog/{slug}', 'pages::posts.show')->name('blog.show');
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::view('dashboard', 'dashboard')->name('dashboard');
+    Route::livewire('dashboard', 'pages::dashboard')->name('dashboard');
 
     Route::prefix('posts')->name('posts.')->middleware('can:create posts')->group(function() {
         Route::livewire('/', 'pages::posts.index')->name('index');

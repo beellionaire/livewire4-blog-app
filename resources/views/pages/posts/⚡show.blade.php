@@ -120,6 +120,6 @@ new #[Layout('layouts.public')] class extends Component
             </div>
         </footer>
         {{-- Comment section --}}
-        <livewire:blog.comments :post="$post" />
+        <livewire:blog.comment :post="$post" />
     </article>
 </div>
