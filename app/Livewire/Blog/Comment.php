@@ -5,7 +5,6 @@ namespace App\Livewire\Blog;
 use App\Models\Comment as ModelsComment;
 use App\Models\Post;
 use App\Notifications\NewCommentNotification;
-use Illuminate\Http\RedirectResponse;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
@@ -27,8 +26,7 @@ class Comment extends Component
         $this->post = $post;
     }
 
-
-    public function postComment() 
+    public function postComment()
     {
         if (! auth()->check()) {
             return redirect()->route('login');
@@ -54,17 +52,15 @@ class Comment extends Component
         session()->flash('comment-success', 'Komentar berhasil ditambahkan');
     }
 
- 
-    public function startComment($commentId) 
+    public function startComment($commentId)
     {
         if (! auth()->check()) {
             return redirect()->route('login');
         }
 
         $this->replyingTo = $commentId;
-        $this->replyContent = ''; 
+        $this->replyContent = '';
     }
-
 
     public function cancelReply()
     {
@@ -72,8 +68,7 @@ class Comment extends Component
         $this->replyContent = '';
     }
 
-
-    public function postReply($parentId) 
+    public function postReply($parentId)
     {
         if (! auth()->check()) {
             return redirect()->route('login');
@@ -84,7 +79,7 @@ class Comment extends Component
         $comment = ModelsComment::create([
             'post_id' => $this->post->id,
             'user_id' => auth()->id(),
-            'parent_id' => $parentId, 
+            'parent_id' => $parentId,
             'content' => $this->replyContent,
             'status' => 'approved',
         ]);
@@ -105,10 +100,10 @@ class Comment extends Component
     public function render()
     {
         $comments = ModelsComment::where('post_id', $this->post->id)
-            ->approved() 
+            ->approved()
             ->topLevel()
-            ->with(['user', 'replies.user']) 
-            ->latest() 
+            ->with(['user', 'replies.user'])
+            ->latest()
             ->get();
 
         return view('livewire.blog.comment', [
