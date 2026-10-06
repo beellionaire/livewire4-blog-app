@@ -104,38 +104,34 @@ new class extends Component
 };
 ?>
 
-<div>
+{{-- Membungkus komponen dengan state Alpine.js untuk Modal --}}
+<div x-data="{ showDeleteModal: false, commentIdToDelete: null }" class="min-h-screen bg-white text-zinc-900 p-6 transition-colors duration-200">
+    
     <!-- Bagian Header -->
-    <div class="mb-6">
-        <h1 class="text-2xl font-bold text-gray-900">Comments</h1>
-        <p class="mt-1 text-sm text-gray-600">Moderate and manage post comments</p>
+    <div class="mb-8">
+        <h1 class="text-3xl font-extrabold tracking-tight text-zinc-900">Comments</h1>
+        <p class="mt-1 text-sm text-zinc-600">Moderate and manage post comments</p>
     </div>
 
     <!-- Bagian Filter Pencarian dan Status -->
-    <div class="mb-6 bg-white rounded-lg border border-gray-200 p-4">
+    <div class="mb-6 bg-white rounded-2xl border border-zinc-200 p-5 shadow-sm transition-all">
         <div class="flex flex-col sm:flex-row gap-4">
             
             <!-- Input Pencarian -->
             <div class="flex-1">
                 <input 
                     type="text"
-                    {{-- 
-                        wire:model.live: Mengirim data ke backend setiap kali user mengetik.
-                        .debounce.300ms: Menunggu 300 milidetik setelah user berhenti mengetik 
-                        sebelum mengirim request ke server. Ini mencegah server overload (lag). 
-                    --}}
                     wire:model.live.debounce.300ms="search" 
                     placeholder="Search comments..." 
-                    class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                    class="w-full px-4 py-2.5 rounded-xl bg-zinc-50 border border-zinc-200 text-zinc-900 placeholder-zinc-400 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all shadow-inner"
                 />
             </div>
 
             <!-- Dropdown Filter Status -->
             <div class="sm:w-48">
-                {{-- wire:model.live akan langsung memicu update data saat user memilih opsi baru di dropdown --}}
                 <select 
                     wire:model.live="statusFilter" 
-                    class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                    class="w-full px-4 py-2.5 rounded-xl bg-zinc-50 border border-zinc-200 text-zinc-900 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all shadow-inner"
                 >
                     <option value="all">All Status</option>
                     <option value="approved">Approved</option>
@@ -148,95 +144,86 @@ new class extends Component
 
     <!-- Menampilkan Pesan Sukses (Flash Message) -->
     @if (session('success'))
-        {{-- wire:transition memberikan efek animasi muncul/menghilang yang halus --}}
-        <div class="mb-6 bg-green-50 border border-green-200 rounded-lg p-4" wire:transition>
-            <p class="text-sm text-green-800">{{ session('success') }}</p>
+        <div class="mb-6 bg-emerald-50 border border-emerald-200 rounded-2xl p-4 shadow-sm" wire:transition>
+            <p class="text-sm font-medium text-emerald-800 flex items-center gap-2">
+                <svg class="w-4 h-4 text-emerald-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                {{ session('success') }}
+            </p>
         </div>
     @endif
 
     <!-- Daftar Komentar -->
-    <div class="bg-white rounded-lg border border-gray-200 overflow-hidden">
-        <div class="divide-y divide-gray-200">
+    <div class="bg-white rounded-2xl border border-zinc-200 overflow-hidden shadow-sm transition-all">
+        <div class="divide-y divide-zinc-100">
             
-            {{-- Melakukan looping data komentar. Jika data kosong, akan masuk ke blok @empty --}}
             @forelse($comments as $comment)
-                {{-- 
-                    wire:key SANGAT PENTING dalam looping Livewire. 
-                    Ini membantu Livewire melacak elemen mana yang berubah, dihapus, atau ditambah 
-                    tanpa harus me-render ulang seluruh daftar (mencegah bug visual).
-                --}}
-                <div class="p-6 hover:bg-gray-50" wire:key="comment-{{ $comment->id }}">
-                    <div class="flex items-start justify-between mb-3">
-                        <div class="flex items-center">
-                            <!-- Avatar User (Otomatis dari inisial nama) -->
+                <div class="p-6 hover:bg-zinc-50/50 transition-colors" wire:key="comment-{{ $comment->id }}">
+                    
+                    <div class="flex items-start justify-between mb-2">
+                        <div class="flex items-center gap-3">
+                            <!-- Avatar User -->
                             <img 
-                                src="https://ui-avatars.com/api/?name={{ urlencode($comment->user->name) }}&background=4f46e5&color=fff" 
+                                src="https://ui-avatars.com/api/?name={{ urlencode($comment->user->name) }}&background=6366f1&color=fff" 
                                 alt="{{ $comment->user->name }}" 
-                                class="w-10 h-10 rounded-full mr-3"
+                                class="w-10 h-10 rounded-full object-cover shadow-sm border border-zinc-100"
                             >
                             <div>
                                 <!-- Nama pengirim komentar -->
-                                <p class="font-medium text-gray-900">{{ $comment->user->name }}</p>
-                                <p class="text-sm text-gray-500">
-                                    <!-- Menampilkan Judul Artikel (dibatasi 40 huruf) dan link ke artikel tsb -->
-                                    on <a href="{{ route('blog.show', $comment->post->slug) }}" target="_blank" class="text-indigo-600 hover:text-indigo-800">{{ Str::limit($comment->post->title, 40) }}</a>
+                                <p class="text-sm font-semibold text-zinc-900">{{ $comment->user->name }}</p>
+                                <p class="text-xs text-zinc-500 mt-0.5">
+                                    on <a href="{{ route('blog.show', $comment->post->slug) }}" target="_blank" class="font-medium text-indigo-600 hover:text-indigo-800 transition-colors">{{ Str::limit($comment->post->title, 50) }}</a>
                                 </p>
                             </div>
                         </div>
 
-                        <!-- Badge Label Status Komentar (Warna berubah sesuai status) -->
-                        <span class="px-2 py-1 text-xs font-semibold rounded-full
-                            {{ $comment->status === 'approved' ? 'bg-green-100 text-green-800' : '' }}
-                            {{ $comment->status === 'pending' ? 'bg-yellow-100 text-yellow-800' : '' }}
-                            {{ $comment->status === 'spam' ? 'bg-red-100 text-red-800' : '' }}
+                        <!-- Badge Label Status Komentar -->
+                        <span class="px-2.5 py-1 inline-flex text-[11px] leading-none font-semibold rounded-full border
+                            {{ $comment->status === 'approved' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : '' }}
+                            {{ $comment->status === 'pending' ? 'bg-amber-50 text-amber-700 border-amber-200' : '' }}
+                            {{ $comment->status === 'spam' ? 'bg-rose-50 text-rose-700 border-rose-200' : '' }}
                         ">
                             {{ ucfirst($comment->status) }}
                         </span>
                     </div>
 
                     <!-- Isi Text Komentar -->
-                    <div class="text-gray-700 mb-3">
+                    <div class="mt-4 text-sm text-zinc-700 leading-relaxed">
                         {{ $comment->content }}
                     </div>
 
-                    <div class="flex items-center justify-between">
+                    <!-- Footer: Tanggal & Aksi -->
+                    <div class="mt-4 pt-4 border-t border-zinc-100 flex items-center justify-between">
                         <!-- Tanggal Komentar Dibuat -->
-                        <p class="text-sm text-gray-500">
+                        <p class="text-xs font-medium text-zinc-500">
                             {{ $comment->created_at->format('M d, Y \a\t g:i A') }}
                         </p>
 
                         <!-- Tombol Aksi Moderasi -->
-                        <div class="flex gap-2">
-                            <!-- Sembunyikan tombol Approve jika statusnya sudah approved -->
+                        <div class="flex gap-4">
+                            <!-- Approve -->
                             @if($comment->status !== 'approved')
-                                {{-- Memanggil fungsi backend approveComment() dengan parameter ID komentar --}}
                                 <button 
                                     wire:click="approveComment({{ $comment->id }})"
-                                    class="text-sm text-green-600 hover:text-green-800 font-medium"
+                                    class="text-sm text-emerald-600 hover:text-emerald-800 font-semibold transition-colors"
                                 >
                                     Approve
                                 </button>
                             @endif
 
-                            <!-- Sembunyikan tombol Spam jika statusnya sudah spam -->
+                            <!-- Spam -->
                             @if($comment->status !== 'spam')
                                 <button 
                                     wire:click="markAsSpam({{ $comment->id }})"
-                                    class="text-sm text-orange-600 hover:text-orange-800 font-medium"
+                                    class="text-sm text-amber-600 hover:text-amber-800 font-semibold transition-colors"
                                 >
                                     Mark as Spam
                                 </button>
                             @endif
 
-                            <!-- Tombol Delete (Selalu Tampil) -->
+                            <!-- Delete (Memanggil Alpine JS Modal) -->
                             <button 
-                                wire:click="deleteComment({{ $comment->id }})"
-                                {{-- 
-                                    wire:confirm adalah fitur bawaan Livewire 3 untuk memunculkan 
-                                    popup konfirmasi browser bawaan (alert dialog) sebelum aksi dieksekusi. 
-                                --}}
-                                wire:confirm="Are you sure you want to delete this comment?"
-                                class="text-sm text-red-600 hover:text-red-800 font-medium"
+                                @click="commentIdToDelete = {{ $comment->id }}; showDeleteModal = true"
+                                class="text-sm text-rose-600 hover:text-rose-800 font-semibold transition-colors"
                             >
                                 Delete
                             </button>
@@ -244,16 +231,86 @@ new class extends Component
                     </div>
                 </div>
             @empty
-                <!-- Tampilan jika tidak ada data komentar yang ditemukan -->
-                <div class="p-12 text-center text-gray-500">
+                <!-- Tampilan jika tidak ada data -->
+                <div class="p-16 text-center text-sm text-zinc-400">
                     No comments found.
                 </div>
             @endforelse
+            
         </div>
     </div>
 
-    <!-- Menampilkan navigasi halaman (Pagination links) -->
+    <!-- Menampilkan navigasi halaman -->
     <div class="mt-6">
         {{ $comments->links() }}
     </div>
+
+    <!-- ALPINE JS DELETE CONFIRMATION MODAL -->
+    <div 
+        x-show="showDeleteModal" 
+        style="display: none;" 
+        class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6"
+    >
+        <!-- Modal Backdrop -->
+        <div 
+            x-show="showDeleteModal" 
+            x-transition:enter="ease-out duration-300"
+            x-transition:enter-start="opacity-0"
+            x-transition:enter-end="opacity-100"
+            x-transition:leave="ease-in duration-200"
+            x-transition:leave-start="opacity-100"
+            x-transition:leave-end="opacity-0"
+            @click="showDeleteModal = false"
+            class="fixed inset-0 bg-zinc-900/40 backdrop-blur-sm transition-opacity"
+        ></div>
+
+        <!-- Modal Panel -->
+        <div 
+            x-show="showDeleteModal"
+            x-transition:enter="ease-out duration-300"
+            x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+            x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+            x-transition:leave="ease-in duration-200"
+            x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
+            x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+            @keydown.escape.window="showDeleteModal = false"
+            class="relative w-full max-w-md bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-zinc-200 p-6 sm:p-8 transform transition-all"
+        >
+            <div class="flex items-start gap-4 sm:gap-5">
+                <!-- Icon Alert -->
+                <div class="flex-shrink-0 w-12 h-12 rounded-full bg-rose-50 border border-rose-100 flex items-center justify-center">
+                    <svg class="w-6 h-6 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                    </svg>
+                </div>
+                <!-- Konten Modal -->
+                <div class="flex-1 mt-1">
+                    <h3 class="text-lg font-bold text-zinc-900 tracking-tight">Delete Comment</h3>
+                    <p class="mt-2 text-sm text-zinc-500 leading-relaxed">
+                        Are you sure you want to delete this comment? This action cannot be undone and will permanently remove it from the post.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Tombol Aksi -->
+            <div class="mt-8 flex justify-end gap-3">
+                <button 
+                    type="button" 
+                    @click="showDeleteModal = false"
+                    class="px-5 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm font-semibold text-zinc-700 hover:bg-zinc-50 transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-zinc-200"
+                >
+                    Cancel
+                </button>
+                <button 
+                    type="button" 
+                    {{-- Mengeksekusi fungsi PHP dari Alpine JS --}}
+                    @click="$wire.deleteComment(commentIdToDelete); showDeleteModal = false"
+                    class="px-5 py-2.5 bg-rose-600 border border-transparent rounded-xl text-sm font-semibold text-white shadow-md shadow-rose-500/20 hover:bg-rose-700 transition-colors focus:outline-none focus:ring-2 focus:ring-rose-500 focus:ring-offset-2"
+                >
+                    Confirm Delete
+                </button>
+            </div>
+        </div>
+    </div>
+
 </div>

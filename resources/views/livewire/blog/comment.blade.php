@@ -1,59 +1,53 @@
-<div class="mt-12 border-t border-gray-200 pt-8">
+<div class="mt-12 border-t border-zinc-200/80 dark:border-zinc-800/80 pt-10">
     
     <!-- HEADER KOMENTAR -->
-    <h2 class="text-2xl font-bold text-gray-900 mb-6">
-        {{-- 
-            Menghitung total seluruh komentar. 
-            $comments->count() menghitung jumlah komentar utama.
-            $comments->sum(...) menjumlahkan seluruh balasan dari masing-masing komentar utama.
-        --}}
-        Comments ({{ $comments->count() + $comments->sum(fn($c) => $c->replies->count()) }})
-    </h2>
+    <div class="flex items-center justify-between mb-8">
+        <h2 class="text-2xl font-bold text-zinc-900 dark:text-zinc-100 tracking-tight flex items-center gap-3">
+            Comments 
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20">
+                {{ $comments->count() + $comments->sum(fn($c) => $c->replies->count()) }}
+            </span>
+        </h2>
+    </div>
 
     <!-- NOTIFIKASI SUKSES (FLASH MESSAGE) -->
-    {{-- Mengecek apakah ada session bernama 'comment-success' (dikirim dari fungsi postComment/postReply) --}}
     @if (session('comment-success'))
-        {{-- wire:transition memberikan efek animasi (fade in/out) halus khas Livewire saat notifikasi muncul/hilang --}}
-        <div class="mb-6 bg-green-50 border border-green-200 rounded-lg p-4" wire:transition>
-            <p class="text-sm text-green-800">{{ session('comment-success') }}</p>
+        <div class="mb-6 bg-emerald-500/10 border border-emerald-500/20 backdrop-blur-xl rounded-2xl p-4 shadow-sm" wire:transition>
+            <p class="text-sm font-medium text-emerald-800 dark:text-emerald-300 flex items-center gap-2">
+                <svg class="w-4 h-4 text-emerald-600 dark:text-emerald-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                {{ session('comment-success') }}
+            </p>
         </div>
     @endif
 
     <!-- FORM KOMENTAR UTAMA (BARU) -->
-    {{-- @auth memastikan form hanya dirender jika user sudah login --}}
     @auth
-        <div class="mb-8 bg-gray-50 rounded-lg p-6">
-            <h3 class="text-lg font-semibold text-gray-900 mb-4">Leave a comment</h3>
+        <div class="mb-10 bg-white/70 dark:bg-zinc-900/70 backdrop-blur-xl rounded-3xl p-6 sm:p-8 border border-zinc-200/80 dark:border-zinc-800/80 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none transition-all">
+            <h3 class="text-lg font-semibold text-zinc-900 dark:text-zinc-100 mb-4 tracking-tight">Leave a comment</h3>
             
-            {{-- wire:submit akan memanggil fungsi postComment() di class PHP saat tombol submit ditekan. 
-                 Livewire otomatis mencegah form melakukan reload halaman (event.preventDefault) --}}
             <form wire:submit="postComment">
-                
-                {{-- wire:model mengikat input textarea ini secara real-time dengan properti $newComment di class PHP --}}
                 <textarea 
                     wire:model="newComment"
                     rows="4"
                     placeholder="Share your thoughts..."
-                    class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                    class="w-full rounded-2xl bg-zinc-50/80 dark:bg-zinc-950/80 border border-zinc-200/80 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 text-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 shadow-inner transition-all duration-200 p-4"
                 ></textarea>
                 
-                {{-- Menampilkan pesan error validasi khusus untuk properti 'newComment' (jika kosong atau terlalu pendek) --}}
                 @error('newComment')
-                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    <p class="mt-2 text-xs font-medium text-rose-500 dark:text-rose-400">{{ $message }}</p>
                 @enderror
                 
                 <div class="mt-4 flex justify-end">
-                    <button type="submit" class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                    <button type="submit" class="inline-flex items-center px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 border border-transparent rounded-xl font-semibold text-xs text-white uppercase tracking-wider shadow-sm shadow-indigo-500/20 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-zinc-900 transition-all duration-200">
                         Post Comment
                     </button>
                 </div>
             </form>
         </div>
-    {{-- @else dijalankan jika pengunjung belum login --}}
     @else
-        <div class="mb-8 bg-gray-50 rounded-lg p-6 text-center">
-            <p class="text-gray-600 mb-4">You must be logged in to comment.</p>
-            <a href="{{ route('login') }}" class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700">
+        <div class="mb-10 bg-white/70 dark:bg-zinc-900/70 backdrop-blur-xl rounded-3xl p-8 border border-zinc-200/80 dark:border-zinc-800/80 shadow-[0_8px_30px_rgb(0,0,0,0.04)] text-center transition-all">
+            <p class="text-zinc-600 dark:text-zinc-400 text-sm mb-4 font-medium">You must be logged in to comment.</p>
+            <a href="{{ route('login') }}" class="inline-flex items-center px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 border border-transparent rounded-xl font-semibold text-xs text-white uppercase tracking-wider shadow-sm shadow-indigo-500/20 transition-all duration-200">
                 Login to Comment
             </a>
         </div>
@@ -61,49 +55,39 @@
 
     <!-- DAFTAR KOMENTAR -->
     <div class="space-y-6">
-        
-        {{-- @forelse adalah gabungan @foreach dan @if(empty). 
-             Jika $comments ada isinya, akan dilooping. Jika kosong, akan masuk ke blok @empty di paling bawah --}}
         @forelse($comments as $comment)
-            <div class="bg-white rounded-lg border border-gray-200 p-6">
+            <div class="bg-white/70 dark:bg-zinc-900/70 backdrop-blur-xl rounded-2xl border border-zinc-200/80 dark:border-zinc-800/80 p-6 sm:p-7 shadow-[0_4px_20px_rgb(0,0,0,0.03)] transition-all">
                 
                 <!-- BAGIAN HEADER KOMENTAR (FOTO, NAMA, WAKTU) -->
                 <div class="flex items-start justify-between mb-4">
-                    <div class="flex items-center">
-                        {{-- Memanggil API UI-Avatars untuk membuat foto profil otomatis berinisial nama User --}}
+                    <div class="flex items-center gap-3">
                         <img 
-                            src="https://ui-avatars.com/api/?name={{ urlencode($comment->user->name) }}&background=4f46e5&color=fff" 
+                            src="https://ui-avatars.com/api/?name={{ urlencode($comment->user->name) }}&background=6366f1&color=fff" 
                             alt="{{ $comment->user->name }}" 
-                            class="w-10 h-10 rounded-full mr-3"
+                            class="w-10 h-10 rounded-full object-cover shadow-sm flex-shrink-0"
                         >
                         <div>
-                            {{-- Menampilkan nama relasi user pembuat komentar --}}
-                            <p class="font-medium text-gray-900">{{ $comment->user->name }}</p>
-                            {{-- diffForHumans() mengubah format waktu SQL menjadi format ramah baca (misal: "2 hours ago") --}}
-                            <p class="text-sm text-gray-500">{{ $comment->created_at->diffForHumans() }}</p>
+                            <p class="font-semibold text-zinc-900 dark:text-zinc-100 text-sm">{{ $comment->user->name }}</p>
+                            <p class="text-xs text-zinc-400 dark:text-zinc-500 font-medium">{{ $comment->created_at->diffForHumans() }}</p>
                         </div>
                     </div>
                 </div>
 
                 <!-- ISI/TEKS KOMENTAR -->
-                <div class="text-gray-700 mb-4">
+                <div class="text-zinc-700 dark:text-zinc-300 text-sm sm:text-base leading-relaxed mb-4 pl-1">
                     {{ $comment->content }}
                 </div>
 
                 <!-- TOMBOL AKSI (REPLY / CANCEL) -->
-                <div class="flex items-center gap-4">
-                    {{-- Hanya tampilkan tombol Reply jika user login --}}
+                <div class="flex items-center gap-4 pl-1">
                     @auth
-                        {{-- Mengecek properti state $replyingTo. 
-                             Jika ID komentar ini sama dengan ID yang sedang diklik user untuk dibalas, tampilkan tombol "Cancel" --}}
                         @if($replyingTo === $comment->id)
-                            <button wire:click="cancelReply" class="text-sm text-gray-600 hover:text-gray-900">
+                            <button wire:click="cancelReply" class="text-xs font-semibold text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200 transition-colors">
                                 Cancel
                             </button>
                         @else
-                            {{-- wire:click="startReply(...)" memanggil fungsi startReply() di PHP 
-                                 dan mengirimkan parameter ID komentar saat ini --}}
-                            <button wire:click="startComment({{ $comment->id }})" class="text-sm text-indigo-600 hover:text-indigo-800 font-medium">
+                            <button wire:click="startComment({{ $comment->id }})" class="text-xs font-semibold text-indigo-600 hover:text-indigo-800 dark:text-indigo-400 dark:hover:text-indigo-300 transition-colors flex items-center gap-1">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"></path></svg>
                                 Reply
                             </button>
                         @endif
@@ -111,29 +95,25 @@
                 </div>
 
                 <!-- FORM BALASAN (REPLY FORM) -->
-                {{-- Form ini hanya akan dirender (muncul) jika state $replyingTo cocok dengan ID komentar ini --}}
                 @if($replyingTo === $comment->id)
-                    <div class="mt-4 bg-gray-50 rounded-lg p-4" wire:transition>
-                        
-                        {{-- Memanggil postReply() dan mengirimkan parameter ID parent komentar --}}
+                    <div class="mt-4 bg-zinc-50/80 dark:bg-zinc-950/60 backdrop-blur-md rounded-2xl p-4 sm:p-5 border border-zinc-200/80 dark:border-zinc-800/80 transition-all" wire:transition>
                         <form wire:submit="postReply({{ $comment->id }})">
-                            {{-- Mengikat input dengan properti $replyContent --}}
                             <textarea 
                                 wire:model="replyContent"
                                 rows="3"
                                 placeholder="Write your reply..."
-                                class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                class="w-full rounded-xl bg-white/80 dark:bg-zinc-900/80 border border-zinc-200/80 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 text-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 shadow-inner transition-all duration-200 p-3"
                             ></textarea>
                             
                             @error('replyContent')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                <p class="mt-2 text-xs font-medium text-rose-500 dark:text-rose-400">{{ $message }}</p>
                             @enderror
                             
                             <div class="mt-3 flex justify-end gap-2">
-                                <button type="button" wire:click="cancelReply" class="inline-flex items-center px-3 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:bg-gray-50">
+                                <button type="button" wire:click="cancelReply" class="inline-flex items-center px-3.5 py-2 bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl font-semibold text-xs text-zinc-700 dark:text-zinc-300 uppercase tracking-wider shadow-sm hover:bg-zinc-50 dark:hover:bg-zinc-700 transition-all duration-200">
                                     Cancel
                                 </button>
-                                <button type="submit" class="inline-flex items-center px-3 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700">
+                                <button type="submit" class="inline-flex items-center px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 border border-transparent rounded-xl font-semibold text-xs text-white uppercase tracking-wider shadow-sm shadow-indigo-500/20 transition-all duration-200">
                                     Post Reply
                                 </button>
                             </div>
@@ -142,40 +122,36 @@
                 @endif
 
                 <!-- DAFTAR BALASAN (NESTED REPLIES) -->
-                {{-- Mengecek apakah komentar utama ini memiliki balasan --}}
                 @if($comment->replies->count() > 0)
-                    {{-- Styling UI menggunakan margin-left (ml-8) dan border kiri (border-l-2) 
-                         untuk memberikan efek visual menjorok ke dalam (nested) --}}
-                    <div class="mt-6 ml-8 space-y-4 border-l-2 border-gray-200 pl-6">
-                        
-                        {{-- Melakukan looping (iterasi) terhadap data balasan --}}
+                    <div class="mt-5 ml-4 sm:ml-6 space-y-3 border-l-2 border-indigo-500/20 dark:border-indigo-500/30 pl-4 sm:pl-6">
                         @foreach($comment->replies as $reply)
-                            <div class="bg-gray-50 rounded-lg p-4">
-                                <div class="flex items-start mb-3">
+                            <div class="bg-zinc-50/80 dark:bg-zinc-950/60 backdrop-blur-md rounded-2xl p-4 border border-zinc-200/60 dark:border-zinc-800/60 transition-all">
+                                <div class="flex items-start mb-2.5">
                                     <img 
                                         src="https://ui-avatars.com/api/?name={{ urlencode($reply->user->name) }}&background=6366f1&color=fff" 
                                         alt="{{ $reply->user->name }}" 
-                                        class="w-8 h-8 rounded-full mr-3"
+                                        class="w-7 h-7 rounded-full object-cover mr-3 shadow-sm flex-shrink-0"
                                     >
                                     <div>
-                                        <p class="font-medium text-gray-900 text-sm">{{ $reply->user->name }}</p>
-                                        <p class="text-xs text-gray-500">{{ $reply->created_at->diffForHumans() }}</p>
+                                        <p class="font-semibold text-zinc-900 dark:text-zinc-100 text-xs sm:text-sm">{{ $reply->user->name }}</p>
+                                        <p class="text-[11px] text-zinc-400 dark:text-zinc-500 font-medium">{{ $reply->created_at->diffForHumans() }}</p>
                                     </div>
                                 </div>
-                                <div class="text-gray-700 text-sm">
+                                <div class="text-zinc-700 dark:text-zinc-300 text-xs sm:text-sm leading-relaxed pl-10">
                                     {{ $reply->content }}
                                 </div>
                             </div>
                         @endforeach
-                        
                     </div>
                 @endif
 
             </div>
-        {{-- Jika tidak ada satupun komentar di artikel ini, tampilkan blok @empty di bawah ini --}}
         @empty
-            <div class="text-center py-12">
-                <p class="text-gray-500">No comments yet. Be the first to share your thoughts!</p>
+            <div class="text-center py-16 bg-white/50 dark:bg-zinc-900/50 backdrop-blur-xl rounded-3xl border border-zinc-200/80 dark:border-zinc-800/80 shadow-sm">
+                <div class="w-12 h-12 rounded-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-zinc-400 mx-auto mb-3">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
+                </div>
+                <p class="text-zinc-600 dark:text-zinc-400 font-medium text-sm">No comments yet. Be the first to share your thoughts!</p>
             </div>
         @endforelse
     </div>

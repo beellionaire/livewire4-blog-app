@@ -58,28 +58,30 @@ new class extends Component
 };
 ?>
 
-<div>
-    <div class="mb-6">
-        <h1 class="text-2xl font-bold text-gray-900">Users</h1>
-        <p class="mt-1 text-sm text-gray-600">Manage user accounts and roles</p>
+{{-- Membungkus komponen dengan state Alpine.js --}}
+<div x-data="{ showDeleteModal: false, userIdToDelete: null }" class="min-h-screen bg-white text-zinc-900 p-6 transition-colors duration-200">
+    
+    <div class="mb-8">
+        <h1 class="text-3xl font-extrabold tracking-tight text-zinc-900">Users</h1>
+        <p class="mt-1 text-sm text-zinc-600">Manage user accounts and roles</p>
     </div>
 
     <!-- Filters -->
-    <div class="mb-6 bg-white rounded-lg border border-gray-200 p-4">
+    <div class="mb-6 bg-white rounded-2xl border border-zinc-200 p-5 shadow-sm transition-all">
         <div class="flex flex-col sm:flex-row gap-4">
             <div class="flex-1">
                 <input 
                     type="text"
                     wire:model.live.debounce.300ms="search" 
                     placeholder="Search users..." 
-                    class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                    class="w-full px-4 py-2.5 rounded-xl bg-zinc-50 border border-zinc-200 text-zinc-900 placeholder-zinc-400 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all shadow-inner"
                 />
             </div>
 
             <div class="sm:w-48">
                 <select 
                     wire:model.live="roleFilter" 
-                    class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                    class="w-full px-4 py-2.5 rounded-xl bg-zinc-50 border border-zinc-200 text-zinc-900 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all shadow-inner"
                 >
                     <option value="all">All Roles</option>
                     @foreach($roles as $role)
@@ -89,7 +91,7 @@ new class extends Component
             </div>
 
             <div>
-                <a href="{{ route('users.create') }}" class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                <a href="{{ route('users.create') }}" class="inline-flex items-center px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs uppercase tracking-wider rounded-xl shadow-md shadow-indigo-500/20 transition-all duration-200">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                     </svg>
@@ -101,83 +103,75 @@ new class extends Component
 
     <!-- Success/Error Messages -->
     @if (session('success'))
-        <div class="mb-6 bg-green-50 border border-green-200 rounded-lg p-4" wire:transition>
-            <p class="text-sm text-green-800">{{ session('success') }}</p>
+        <div class="mb-6 bg-emerald-50 border border-emerald-200 rounded-2xl p-4 shadow-sm" wire:transition>
+            <p class="text-sm font-medium text-emerald-800 flex items-center gap-2">
+                <svg class="w-4 h-4 text-emerald-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                {{ session('success') }}
+            </p>
         </div>
     @endif
 
     @if (session('error'))
-        <div class="mb-6 bg-red-50 border border-red-200 rounded-lg p-4" wire:transition>
-            <p class="text-sm text-red-800">{{ session('error') }}</p>
+        <div class="mb-6 bg-rose-50 border border-rose-200 rounded-2xl p-4 shadow-sm" wire:transition>
+            <p class="text-sm font-medium text-rose-800 flex items-center gap-2">
+                <svg class="w-4 h-4 text-rose-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                {{ session('error') }}
+            </p>
         </div>
     @endif
 
     <!-- Users Table -->
-    <div class="bg-white rounded-lg border border-gray-200 overflow-hidden">
+    <div class="bg-white rounded-2xl border border-zinc-200 overflow-hidden shadow-sm transition-all">
         <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-gray-50">
+            <table class="min-w-full divide-y divide-zinc-200">
+                <thead class="bg-zinc-50/70">
                     <tr>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            User
-                        </th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Email
-                        </th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Roles
-                        </th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Joined
-                        </th>
-                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Actions
-                        </th>
+                        <th class="px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-zinc-400">User</th>
+                        <th class="px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-zinc-400">Email</th>
+                        <th class="px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-zinc-400">Roles</th>
+                        <th class="px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-zinc-400">Joined</th>
+                        <th class="px-6 py-3.5 text-right text-xs font-semibold uppercase tracking-wider text-zinc-400">Actions</th>
                     </tr>
                 </thead>
-                <tbody class="bg-white divide-y divide-gray-200">
+                <tbody class="divide-y divide-zinc-100">
                     @forelse($users as $user)
-                        <tr wire:key="user-{{ $user->id }}" wire:transition class="hover:bg-gray-50">
+                        <tr wire:key="user-{{ $user->id }}" class="hover:bg-zinc-50/50 transition-colors">
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="flex items-center">
-                                    <div class="flex-shrink-0 h-10 w-10">
-                                        <img class="h-10 w-10 rounded-full" src="https://ui-avatars.com/api/?name={{ urlencode($user->name) }}&background=4f46e5&color=fff" alt="">
-                                    </div>
-                                    <div class="ml-4">
-                                        <div class="text-sm font-medium text-gray-900">{{ $user->name }}</div>
-                                    </div>
+                                <div class="flex items-center gap-4">
+                                    <img class="h-10 w-10 rounded-full object-cover shadow-sm border border-zinc-100" src="https://ui-avatars.com/api/?name={{ urlencode($user->name) }}&background=6366f1&color=fff" alt="{{ $user->name }}">
+                                    <div class="text-sm font-semibold text-zinc-900">{{ $user->name }}</div>
                                 </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm text-gray-900">{{ $user->email }}</div>
+                                <div class="text-sm text-zinc-600">{{ $user->email }}</div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="flex flex-wrap gap-1">
+                                <div class="flex flex-wrap gap-1.5">
                                     @forelse($user->roles as $role)
-                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-indigo-100 text-indigo-800">
+                                        <span class="px-2.5 py-1 inline-flex text-[11px] leading-none font-semibold rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200">
                                             {{ ucfirst($role->name) }}
                                         </span>
                                     @empty
-                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
+                                        <span class="px-2.5 py-1 inline-flex text-[11px] leading-none font-semibold rounded-full bg-zinc-100 text-zinc-600 border border-zinc-200">
                                             No role
                                         </span>
                                     @endforelse
                                 </div>
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            <td class="px-6 py-4 whitespace-nowrap text-xs text-zinc-500 font-medium">
                                 {{ $user->created_at->format('M d, Y') }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                <div class="flex justify-end gap-2">
-                                    <a href="{{ route('users.edit', $user) }}" class="text-indigo-600 hover:text-indigo-900">
+                                <div class="flex justify-end gap-3">
+                                    <a href="{{ route('users.edit', $user) }}" class="text-indigo-600 hover:text-indigo-800 font-semibold transition-colors">
                                         Edit
                                     </a>
                                     
                                     @if($user->id !== auth()->id())
+                                        <!-- Tombol Delete yang memanggil fungsi Alpine.js -->
                                         <button 
-                                            wire:click="deleteUser({{ $user->id }})"
-                                            wire:confirm="Are you sure you want to delete this user?"
-                                            class="text-red-600 hover:text-red-900"
+                                            @click="userIdToDelete = {{ $user->id }}; showDeleteModal = true"
+                                            class="text-rose-600 hover:text-rose-800 font-semibold transition-colors"
                                         >
                                             Delete
                                         </button>
@@ -187,7 +181,7 @@ new class extends Component
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="px-6 py-12 text-center text-gray-500">
+                            <td colspan="5" class="px-6 py-16 text-center text-sm text-zinc-400">
                                 No users found.
                             </td>
                         </tr>
@@ -200,6 +194,74 @@ new class extends Component
     <!-- Pagination -->
     <div class="mt-6">
         {{ $users->links() }}
+    </div>
+
+    <!-- ALPINE JS DELETE CONFIRMATION MODAL -->
+    <div 
+        x-show="showDeleteModal" 
+        style="display: none;" 
+        class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6"
+    >
+        <!-- Modal Backdrop (Glassmorphism Blur) -->
+        <div 
+            x-show="showDeleteModal" 
+            x-transition:enter="ease-out duration-300"
+            x-transition:enter-start="opacity-0"
+            x-transition:enter-end="opacity-100"
+            x-transition:leave="ease-in duration-200"
+            x-transition:leave-start="opacity-100"
+            x-transition:leave-end="opacity-0"
+            @click="showDeleteModal = false"
+            class="fixed inset-0 bg-zinc-900/40 backdrop-blur-sm transition-opacity"
+        ></div>
+
+        <!-- Modal Panel -->
+        <div 
+            x-show="showDeleteModal"
+            x-transition:enter="ease-out duration-300"
+            x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+            x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+            x-transition:leave="ease-in duration-200"
+            x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
+            x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+            @keydown.escape.window="showDeleteModal = false"
+            class="relative w-full max-w-md bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-zinc-200 p-6 sm:p-8 transform transition-all"
+        >
+            <div class="flex items-start gap-4 sm:gap-5">
+                <!-- Icon Alert -->
+                <div class="flex-shrink-0 w-12 h-12 rounded-full bg-rose-50 border border-rose-100 flex items-center justify-center">
+                    <svg class="w-6 h-6 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                    </svg>
+                </div>
+                <!-- Konten Modal -->
+                <div class="flex-1 mt-1">
+                    <h3 class="text-lg font-bold text-zinc-900 tracking-tight">Delete User</h3>
+                    <p class="mt-2 text-sm text-zinc-500 leading-relaxed">
+                        Are you sure you want to delete this user? All of their data will be permanently removed. This action cannot be undone.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Tombol Aksi -->
+            <div class="mt-8 flex justify-end gap-3">
+                <button 
+                    type="button" 
+                    @click="showDeleteModal = false"
+                    class="px-5 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm font-semibold text-zinc-700 hover:bg-zinc-50 transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-zinc-200"
+                >
+                    Cancel
+                </button>
+                <button 
+                    type="button" 
+                    {{-- $wire.deleteUser memanggil metode PHP Livewire langsung dari Alpine JS --}}
+                    @click="$wire.deleteUser(userIdToDelete); showDeleteModal = false"
+                    class="px-5 py-2.5 bg-rose-600 border border-transparent rounded-xl text-sm font-semibold text-white shadow-md shadow-rose-500/20 hover:bg-rose-700 transition-colors focus:outline-none focus:ring-2 focus:ring-rose-500 focus:ring-offset-2"
+                >
+                    Confirm Delete
+                </button>
+            </div>
+        </div>
     </div>
 
 </div>

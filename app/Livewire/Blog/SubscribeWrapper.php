@@ -2,11 +2,11 @@
 
 namespace App\Livewire\Blog;
 
-use App\Models\Subscriber as ModelsSubscriber;
+use App\Models\Subscriber;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
 
-class Subscriber extends Component
+class SubscribeWrapper extends Component
 {
     #[Validate('required|email|unique:subscribers,email')]
     public $email = '';
@@ -15,7 +15,7 @@ class Subscriber extends Component
     {
         $this->validate();
 
-        $subscriber = new ModelsSubscriber([
+        $subscriber = new Subscriber([
             'email' => $this->email,
             'is_verified' => true,
             'verified_at' => now(),
@@ -31,6 +31,6 @@ class Subscriber extends Component
 
     public function render()
     {
-        return view('livewire.blog.subscriber');
+        return view('livewire.blog.subscribe-wrapper');
     }
 }

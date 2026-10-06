@@ -2,9 +2,6 @@
 
 namespace App\Livewire\Blog;
 
-// Menggunakan alias 'ModelsComment' untuk App\Models\Comment.
-// Ini WAJIB dilakukan karena nama class Livewire ini juga 'Comment'.
-// Jika tidak di-alias, PHP akan bingung membedakan antara Model dan Component.
 use App\Models\Comment as ModelsComment;
 use App\Models\Post;
 use App\Notifications\NewCommentNotification;
