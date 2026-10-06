@@ -35,7 +35,7 @@ use Spatie\Permission\Traits\HasRoles;
 class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable, PasskeyAuthenticatable, TwoFactorAuthenticatable, HasRoles; // -> tambahkan HasRoles
+    use HasFactory, HasRoles, Notifiable, PasskeyAuthenticatable, TwoFactorAuthenticatable; // -> tambahkan HasRoles
 
     /**
      * Get the attributes that should be cast.
@@ -63,7 +63,8 @@ class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
     }
 
     // relation with posts
-    public function posts() : HasMany {
+    public function posts(): HasMany
+    {
         return $this->hasMany(Post::class);
     }
 }

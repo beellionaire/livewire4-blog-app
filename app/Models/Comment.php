@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -18,27 +17,33 @@ class Comment extends Model
         'status',
     ];
 
-    public function post(): BelongsTo {
+    public function post(): BelongsTo
+    {
         return $this->belongsTo(Post::class);
     }
 
-    public function user(): BelongsTo {
+    public function user(): BelongsTo
+    {
         return $this->belongsTo(User::class);
     }
 
-    public function parent(): HasMany {
+    public function parent(): HasMany
+    {
         return $this->hasMany(Comment::class, 'parent_id');
     }
 
-    public function replies(): HasMany {
+    public function replies(): HasMany
+    {
         return $this->hasMany(Comment::class, 'parent_id')->with('user', 'replies');
     }
 
-    public function scopeApproved(Builder $query): void {
+    public function scopeApproved(Builder $query): void
+    {
         $query->where('status', 'approved');
     }
 
-    public function scopeTopLevel(Builder $query): void {
+    public function scopeTopLevel(Builder $query): void
+    {
         $query->whereNull('parent_id');
     }
 }

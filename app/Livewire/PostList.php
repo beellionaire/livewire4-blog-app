@@ -4,7 +4,6 @@ namespace App\Livewire;
 
 use App\Models\Category;
 use App\Models\Post;
-use App\Models\Tag;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Url;
@@ -28,38 +27,39 @@ class PostList extends Component
     #[Title('Blog')]
     public function render()
     {
-        $posts = Post::with(['user','categories','tags'])
-        ->where('status','published')
-        ->when($this->search, function($query){
-            $query->where('title','like','%' . $this->search . '%')
-                ->orWhere('content','like','%'. $this->search. '%')
-                ->orWhere('excerpt','like','%'. $this->search. '%');
-        })
-        ->when($this->selectedCategory, function($query) {
-            $query->whereHas('categories', function($q) {
-                $q->where('slug', $this->selectedCategory);
-            });
-        })
-        ->when($this->selectedTag, function($query){
-            $query->whereHas('tags',function($q){
-                $q->where('slug',$this->selectedTag);
-            });
-        })
-        ->latest('published_at')
-        ->paginate(9);
+        $posts = Post::with(['user', 'categories', 'tags'])
+            ->where('status', 'published')
+            ->when($this->search, function ($query) {
+                $query->where('title', 'like', '%'.$this->search.'%')
+                    ->orWhere('content', 'like', '%'.$this->search.'%')
+                    ->orWhere('excerpt', 'like', '%'.$this->search.'%');
+            })
+            ->when($this->selectedCategory, function ($query) {
+                $query->whereHas('categories', function ($q) {
+                    $q->where('slug', $this->selectedCategory);
+                });
+            })
+            ->when($this->selectedTag, function ($query) {
+                $query->whereHas('tags', function ($q) {
+                    $q->where('slug', $this->selectedTag);
+                });
+            })
+            ->latest('published_at')
+            ->paginate(9);
 
-        return view('livewire.post-list',[
+        return view('livewire.post-list', [
             'posts' => $posts,
             'categories' => Category::withCount('posts')->get(),
             'tags' => Category::withCount('posts')->get(),
         ]);
     }
 
-    public function updatingSearch(){
+    public function updatingSearch()
+    {
         $this->resetPage();
     }
 
-     public function updatingSelectedCategory(): void
+    public function updatingSelectedCategory(): void
     {
         $this->resetPage();
     }

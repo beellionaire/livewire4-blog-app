@@ -12,19 +12,21 @@ class Category extends Model
         'name',
         'slug',
         'description',
-        'color'
+        'color',
     ];
 
     // relasi many to many
-    public function posts(): BelongsToMany {
+    public function posts(): BelongsToMany
+    {
         return $this->belongsToMany(Post::class);
     }
 
     // membuat slug secara otomatis
-    protected static function boot(): void {
+    protected static function boot(): void
+    {
         parent::boot();
 
-        static::creating(function($category) {
+        static::creating(function ($category) {
             if (empty($category->slug)) {
                 $category->slug = Str::slug($category->name);
             }

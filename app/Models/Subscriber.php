@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Str;
 
 class Subscriber extends Model
 {
@@ -21,16 +22,18 @@ class Subscriber extends Model
         'verified_at' => 'datetime',
     ];
 
-    protected static function boot() {
+    protected static function boot()
+    {
         parent::boot();
 
-        static::creating(function($subscriber) {
-            $subscriber->token = \Illuminate\Support\Str::random(32);
+        static::creating(function ($subscriber) {
+            $subscriber->token = Str::random(32);
         });
     }
 
     // required for sending notifications to subscriber
-    public function routeNotificationForMail() {
+    public function routeNotificationForMail()
+    {
         return $this->email;
     }
 }

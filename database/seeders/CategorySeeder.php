@@ -4,7 +4,6 @@ namespace Database\Seeders;
 
 use App\Models\Category;
 use App\Models\Tag;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class CategorySeeder extends Seeder
@@ -14,7 +13,7 @@ class CategorySeeder extends Seeder
      */
     public function run(): void
     {
-        // create categories 
+        // create categories
         $categories = [
             ['name' => 'Tech', 'description' => 'tech news and tutorials', 'color' => '#3b82f6'],
             ['name' => 'Businsess', 'description' => 'business insights and strategies', 'color' => '#10b981'],
@@ -26,7 +25,6 @@ class CategorySeeder extends Seeder
         foreach ($categories as $category) {
             Category::create($category);
         }
-
 
         // create tags
         $tags = [
@@ -40,7 +38,7 @@ class CategorySeeder extends Seeder
             'Nature',
             'Javascript',
             'React JS',
-            'Western Food'
+            'Western Food',
         ];
 
         foreach ($tags as $tag) {

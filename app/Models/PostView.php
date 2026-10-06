@@ -16,14 +16,16 @@ class PostView extends Model
     ];
 
     protected $casts = [
-        'viewed_at' => 'datetime'
+        'viewed_at' => 'datetime',
     ];
 
-    public function post(): BelongsTo {
+    public function post(): BelongsTo
+    {
         return $this->belongsTo(Post::class);
     }
 
-    public function user(): BelongsTo {
+    public function user(): BelongsTo
+    {
         return $this->belongsTo(User::class);
     }
 }

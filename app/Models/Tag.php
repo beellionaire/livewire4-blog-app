@@ -13,15 +13,16 @@ class Tag extends Model
         'slug',
     ];
 
-    public function posts(): BelongsToMany {
+    public function posts(): BelongsToMany
+    {
         return $this->belongsToMany(Post::class);
     }
 
-
-    protected static function boot(): void {
+    protected static function boot(): void
+    {
         parent::boot();
 
-        static::creating(function($tag) {
+        static::creating(function ($tag) {
             if (empty($tag->slug)) {
                 $tag->slug = Str::slug($tag->name);
             }

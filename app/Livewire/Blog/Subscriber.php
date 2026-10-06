@@ -8,14 +8,13 @@ use Livewire\Component;
 
 class Subscriber extends Component
 {
-
     #[Validate('required|email|unique:subscribers,email')]
-
     public $email = '';
 
-    public function subscribe() {
+    public function subscribe()
+    {
         $this->validate();
-        
+
         $subscriber = new ModelsSubscriber([
             'email' => $this->email,
             'is_verified' => true,

@@ -15,10 +15,7 @@ class NewPostPublished extends Notification implements ShouldQueue
     /**
      * Create a new notification instance.
      */
-    public function __construct(public Post $post)
-    {
-        
-    }
+    public function __construct(public Post $post) {}
 
     /**
      * Get the notification's delivery channels.
@@ -36,10 +33,10 @@ class NewPostPublished extends Notification implements ShouldQueue
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject('New Post' . $this->post->title)
+            ->subject('New Post'.$this->post->title)
             ->greeting('Hello')
-            ->line('Postingan baru sudah tersedia untuk dibaca di' . config('app.name'))
-            ->line('**' . $this->post->title . '**')
+            ->line('Postingan baru sudah tersedia untuk dibaca di'.config('app.name'))
+            ->line('**'.$this->post->title.'**')
             ->line($this->post->excerpt ?? 'Click below to read full post')
             ->action('Read Post', url('/'))
             ->line('Terima kasih sudah berlangganan!')

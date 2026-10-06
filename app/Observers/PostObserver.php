@@ -4,6 +4,7 @@ namespace App\Observers;
 
 use App\Models\Post;
 use App\Models\Subscriber;
+use App\Notifications\NewPostPublished;
 use Illuminate\Support\Facades\Notification;
 
 class PostObserver
@@ -28,7 +29,7 @@ class PostObserver
 
             // send notification to each subscriber
             if ($subscribers->count() > 0) {
-                Notification::send($subscribers, new \App\Notifications\NewPostPublished($post));
+                Notification::send($subscribers, new NewPostPublished($post));
             }
         }
     }

@@ -2,11 +2,12 @@
 
 namespace App\Livewire\Blog;
 
-// Menggunakan alias 'ModelsComment' untuk App\Models\Comment. 
-// Ini WAJIB dilakukan karena nama class Livewire ini juga 'Comment'. 
+// Menggunakan alias 'ModelsComment' untuk App\Models\Comment.
+// Ini WAJIB dilakukan karena nama class Livewire ini juga 'Comment'.
 // Jika tidak di-alias, PHP akan bingung membedakan antara Model dan Component.
-use App\Models\Comment as ModelsComment; 
+use App\Models\Comment as ModelsComment;
 use App\Models\Post;
+use App\Notifications\NewCommentNotification;
 use Illuminate\Http\RedirectResponse;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Validate;
@@ -24,7 +25,7 @@ class Comment extends Component
     #[Validate('required|string|min:3|max:1000')]
     public string $newComment = '';
 
-    // Menyimpan ID komentar yang sedang dibalas. 
+    // Menyimpan ID komentar yang sedang dibalas.
     // Bernilai null jika user tidak sedang membalas siapa-siapa.
     // Properti ini mengatur muncul/tidaknya form balasan di tampilan (UI).
     public ?int $replyingTo = null;
@@ -37,20 +38,21 @@ class Comment extends Component
      * Method mount() berjalan pertama kali saat komponen dipanggil di Blade.
      * Menerima parameter data Postingan dari parent view (misal: <livewire:blog.comments :post="$post" />).
      */
-    public function mount(Post $post): void {
+    public function mount(Post $post): void
+    {
         $this->post = $post;
     }
 
     /**
      * Method untuk mengirim komentar utama (Top Level Comment).
-     * 
-     * Catatan Developer: Type hint ': RedirectResponse' di sini berpotensi memunculkan error PHP 
-     * jika user sedang login, karena di akhir kode fungsi ini tidak me-return apapun (void). 
+     *
+     * Catatan Developer: Type hint ': RedirectResponse' di sini berpotensi memunculkan error PHP
+     * jika user sedang login, karena di akhir kode fungsi ini tidak me-return apapun (void).
      * Sebaiknya dihapus atau ubah menjadi tipe data gabungan/void jika menggunakan PHP 8+.
      */
-    public function postComment() { // <- Saran: Hapus ': RedirectResponse'
-        // Pengecekan: Jika user belum login, lemparkan ke halaman login
-        if (!auth()->check()) {
+    public function postComment() // <- Saran: Hapus ': RedirectResponse'
+    {// Pengecekan: Jika user belum login, lemparkan ke halaman login
+        if (! auth()->check()) {
             return redirect()->route('login');
         }
 
@@ -70,7 +72,7 @@ class Comment extends Component
 
         // tambahkan notifikasi disini
         if ($this->post->user_id !== auth()->id()) {
-            $this->post->user->notify(new \App\Notifications\NewCommentNotification($comment));
+            $this->post->user->notify(new NewCommentNotification($comment));
         }
 
         // Memancarkan sinyal (event) 'comment-posted' ke aplikasi.
@@ -84,9 +86,9 @@ class Comment extends Component
     /**
      * Mengatur state saat tombol "Reply/Balas" diklik oleh user.
      */
-    public function startComment($commentId) { // <- Saran: Hapus ': RedirectResponse'
-        // Cegah user guest untuk membuka form balasan
-        if (!auth()->check()) {
+    public function startComment($commentId) // <- Saran: Hapus ': RedirectResponse'
+    {// Cegah user guest untuk membuka form balasan
+        if (! auth()->check()) {
             return redirect()->route('login');
         }
 
@@ -98,7 +100,8 @@ class Comment extends Component
     /**
      * Membatalkan balasan (menutup form balasan).
      */
-    public function cancelReply() {
+    public function cancelReply()
+    {
         $this->replyingTo = null;
         $this->replyContent = '';
     }
@@ -107,12 +110,12 @@ class Comment extends Component
      * Method untuk mengirim balasan (Reply/Nested Comment).
      * Menerima parameter $parentId yang merupakan ID dari komentar yang dibalas.
      */
-    public function postReply($parentId) { // <- Saran: Hapus ': RedirectResponse'
-        if (!auth()->check()) {
-            return redirect()->route('login');
-        }
+    public function postReply($parentId) // <- Saran: Hapus ': RedirectResponse'
+    {if (! auth()->check()) {
+        return redirect()->route('login');
+    }
 
-        // Karena form balasan memiliki properti tersendiri, kita memvalidasi 
+        // Karena form balasan memiliki properti tersendiri, kita memvalidasi
         // properti $replyContent secara manual (tidak memanggil $this->validate() global)
         $this->validate(['replyContent' => 'required|string|min:3|max:1000']);
 
@@ -124,14 +127,14 @@ class Comment extends Component
             'content' => $this->replyContent,
             'status' => 'approved',
         ]);
-        
+
         // Menutup form dan mengosongkan isi input balasan
         $this->replyingTo = null;
         $this->replyContent = '';
 
         // notify post author
         if ($this->post->user_id !== auth()->id()) {
-            $this->post->user->notify(new \App\Notifications\NewCommentNotification($comment));
+            $this->post->user->notify(new NewCommentNotification($comment));
         }
 
         // Memancarkan sinyal agar tampilan dirender ulang
@@ -143,10 +146,10 @@ class Comment extends Component
 
     /**
      * Mengambil daftar komentar dan merender file View (HTML).
-     * 
-     * Attribute #[On('comment-posted')] membuat fungsi render() mendengarkan (listen) 
-     * sinyal 'comment-posted' yang kita tembakkan dari dispatch() di atas. 
-     * Jika sinyal tersebut tertangkap, Livewire otomatis memanggil ulang render() 
+     *
+     * Attribute #[On('comment-posted')] membuat fungsi render() mendengarkan (listen)
+     * sinyal 'comment-posted' yang kita tembakkan dari dispatch() di atas.
+     * Jika sinyal tersebut tertangkap, Livewire otomatis memanggil ulang render()
      * untuk menampilkan komentar baru tanpa perlu memuat ulang seluruh halaman browser.
      */
     #[On('comment-posted')]

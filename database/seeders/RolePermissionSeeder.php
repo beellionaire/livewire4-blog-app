@@ -2,10 +2,10 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
+use Spatie\Permission\PermissionRegistrar;
 
 class RolePermissionSeeder extends Seeder
 {
@@ -15,7 +15,7 @@ class RolePermissionSeeder extends Seeder
     public function run(): void
     {
         // reset caches role and permission
-        app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+        app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
         // create permission
         $permissions = [
@@ -34,7 +34,7 @@ class RolePermissionSeeder extends Seeder
         }
 
         // create role and assign permission
-        $adminRole = Role::create(['name'=>'admin']);
+        $adminRole = Role::create(['name' => 'admin']);
         $adminRole->givePermissionTo(Permission::all());
 
         $editorRole = Role::create(['name' => 'editor']);
@@ -52,7 +52,7 @@ class RolePermissionSeeder extends Seeder
             'delete own posts',
         ]);
 
-        $subscriberRole = Role::create(['name'=>'subscriber']);
+        $subscriberRole = Role::create(['name' => 'subscriber']);
         // subscriber not have permission, they can just read
     }
 }

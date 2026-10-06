@@ -2,11 +2,11 @@
 
 namespace App\Models;
 
-use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Str;
 
 class Post extends Model
 {
@@ -30,6 +30,7 @@ class Post extends Model
     {
         return $this->belongsTo(User::class);
     }
+
     public function categories(): BelongsToMany
     {
         return $this->belongsToMany(Category::class);
@@ -50,11 +51,11 @@ class Post extends Model
         return $this->hasMany(PostView::class);
     }
 
-    //create slug
+    // create slug
     protected static function boot()
     {
         parent::boot();
-        //model event
+        // model event
         static::creating(function ($post) {
             if (empty($post->slug)) {
                 $post->slug = Str::slug($post->title);
