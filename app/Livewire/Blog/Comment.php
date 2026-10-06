@@ -108,9 +108,10 @@ class Comment extends Component
      * Menerima parameter $parentId yang merupakan ID dari komentar yang dibalas.
      */
     public function postReply($parentId) // <- Saran: Hapus ': RedirectResponse'
-    {if (! auth()->check()) {
-        return redirect()->route('login');
-    }
+    {
+        if (! auth()->check()) {
+            return redirect()->route('login');
+        }
 
         // Karena form balasan memiliki properti tersendiri, kita memvalidasi
         // properti $replyContent secara manual (tidak memanggil $this->validate() global)
