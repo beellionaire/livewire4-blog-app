@@ -4,98 +4,63 @@ use Livewire\Component;
 use Livewire\WithPagination;
 use App\Models\Comment;
 
-// Ini adalah format komponen Livewire 3 (biasanya digunakan di Livewire Volt atau single-file component)
 new class extends Component
 {
-    // Menggunakan trait ini agar pagination bekerja secara dinamis tanpa reload halaman
     use WithPagination;
     
-    // Properti publik yang otomatis terikat (data binding) dengan input di frontend
     public string $search = '';
     public string $statusFilter = 'all';
 
-    /**
-     * Fungsi with() digunakan di Livewire 3 untuk mengirim data ke view (pengganti fungsi render()).
-     * Data yang dikirim dari sini tidak akan disimpan di memori state, sehingga lebih ringan.
-     */
+
     public function with(): array
     {
-        // Memulai query ke model Comment, mengambil relasi 'user' dan 'post' sekaligus (Eager Loading) 
-        // untuk mencegah N+1 Query problem. Diurutkan dari yang terbaru (latest).
         $query = Comment::with(['user', 'post'])
             ->latest();
 
-        // LOGIKA FILTER 1: Pencarian teks
         if ($this->search) {
-            // Mencari komentar yang isi kontennya mirip dengan teks pencarian
             $query->where('content', 'like', '%' . $this->search . '%')
-                  // ATAU mencari komentar berdasarkan nama user yang membuat komentar
                   ->orWhereHas('user', function($q) {
                       $q->where('name', 'like', '%' . $this->search . '%');
                   });
         }
 
-        // LOGIKA FILTER 2: Status (Semua, Disetujui, Menunggu, Spam)
         if ($this->statusFilter !== 'all') {
             $query->where('status', $this->statusFilter);
         }
 
-        // LOGIKA FILTER 3: Hak Akses (Role)
-        // Jika user yang login adalah seorang 'author' (penulis), dia hanya boleh melihat 
-        // komentar yang ada pada artikel/postingan miliknya sendiri.
         if (auth()->user()->hasRole('author')) {
             $query->whereHas('post', function($q) {
                 $q->where('user_id', auth()->id());
             });
         }
 
-        // Mengembalikan data $comments yang sudah difilter dan dipaginasi (20 data per halaman)
         return [
             'comments' => $query->paginate(20),
         ];
     }
 
-    /**
-     * Lifecycle Hook Livewire:
-     * Fungsi ini akan otomatis dipanggil TEPAT SEBELUM nilai $search berubah.
-     * Tujuannya: Jika user sedang di halaman 5 lalu mengetik pencarian baru, 
-     * halaman akan direset ke halaman 1 agar data pencarian bisa terlihat.
-     */
     public function updatingSearch(): void
     {
         $this->resetPage();
     }
 
-    /**
-     * Sama seperti di atas, reset ke halaman 1 jika user mengganti dropdown status.
-     */
     public function updatingStatusFilter(): void
     {
         $this->resetPage();
     }
 
-    /**
-     * Fungsi aksi untuk mengubah status komentar menjadi 'approved'.
-     * Menggunakan Route Model Binding (Livewire otomatis mencari data Comment berdasarkan ID yang dikirim dari view).
-     */
     public function approveComment(Comment $comment): void
     {
         $comment->update(['status' => 'approved']);
-        session()->flash('success', 'Comment approved!'); // Mengirim pesan sukses sementara
+        session()->flash('success', 'Comment approved!'); 
     }
 
-    /**
-     * Fungsi aksi untuk menandai komentar sebagai spam.
-     */
     public function markAsSpam(Comment $comment): void
     {
         $comment->update(['status' => 'spam']);
         session()->flash('success', 'Comment marked as spam!');
     }
 
-    /**
-     * Fungsi aksi untuk menghapus komentar dari database.
-     */
     public function deleteComment(Comment $comment): void
     {
         $comment->delete();
@@ -104,20 +69,16 @@ new class extends Component
 };
 ?>
 
-{{-- Membungkus komponen dengan state Alpine.js untuk Modal --}}
 <div x-data="{ showDeleteModal: false, commentIdToDelete: null }" class="min-h-screen bg-white text-zinc-900 p-6 transition-colors duration-200">
     
-    <!-- Bagian Header -->
     <div class="mb-8">
         <h1 class="text-3xl font-extrabold tracking-tight text-zinc-900">Comments</h1>
         <p class="mt-1 text-sm text-zinc-600">Moderate and manage post comments</p>
     </div>
 
-    <!-- Bagian Filter Pencarian dan Status -->
     <div class="mb-6 bg-white rounded-2xl border border-zinc-200 p-5 shadow-sm transition-all">
         <div class="flex flex-col sm:flex-row gap-4">
             
-            <!-- Input Pencarian -->
             <div class="flex-1">
                 <input 
                     type="text"
@@ -127,7 +88,6 @@ new class extends Component
                 />
             </div>
 
-            <!-- Dropdown Filter Status -->
             <div class="sm:w-48">
                 <select 
                     wire:model.live="statusFilter" 
@@ -142,7 +102,6 @@ new class extends Component
         </div>
     </div>
 
-    <!-- Menampilkan Pesan Sukses (Flash Message) -->
     @if (session('success'))
         <div class="mb-6 bg-emerald-50 border border-emerald-200 rounded-2xl p-4 shadow-sm" wire:transition>
             <p class="text-sm font-medium text-emerald-800 flex items-center gap-2">
@@ -152,7 +111,6 @@ new class extends Component
         </div>
     @endif
 
-    <!-- Daftar Komentar -->
     <div class="bg-white rounded-2xl border border-zinc-200 overflow-hidden shadow-sm transition-all">
         <div class="divide-y divide-zinc-100">
             
@@ -161,14 +119,12 @@ new class extends Component
                     
                     <div class="flex items-start justify-between mb-2">
                         <div class="flex items-center gap-3">
-                            <!-- Avatar User -->
                             <img 
                                 src="https://ui-avatars.com/api/?name={{ urlencode($comment->user->name) }}&background=6366f1&color=fff" 
                                 alt="{{ $comment->user->name }}" 
                                 class="w-10 h-10 rounded-full object-cover shadow-sm border border-zinc-100"
                             >
                             <div>
-                                <!-- Nama pengirim komentar -->
                                 <p class="text-sm font-semibold text-zinc-900">{{ $comment->user->name }}</p>
                                 <p class="text-xs text-zinc-500 mt-0.5">
                                     on <a href="{{ route('blog.show', $comment->post->slug) }}" target="_blank" class="font-medium text-indigo-600 hover:text-indigo-800 transition-colors">{{ Str::limit($comment->post->title, 50) }}</a>
@@ -176,7 +132,6 @@ new class extends Component
                             </div>
                         </div>
 
-                        <!-- Badge Label Status Komentar -->
                         <span class="px-2.5 py-1 inline-flex text-[11px] leading-none font-semibold rounded-full border
                             {{ $comment->status === 'approved' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : '' }}
                             {{ $comment->status === 'pending' ? 'bg-amber-50 text-amber-700 border-amber-200' : '' }}
@@ -186,21 +141,16 @@ new class extends Component
                         </span>
                     </div>
 
-                    <!-- Isi Text Komentar -->
                     <div class="mt-4 text-sm text-zinc-700 leading-relaxed">
                         {{ $comment->content }}
                     </div>
 
-                    <!-- Footer: Tanggal & Aksi -->
                     <div class="mt-4 pt-4 border-t border-zinc-100 flex items-center justify-between">
-                        <!-- Tanggal Komentar Dibuat -->
                         <p class="text-xs font-medium text-zinc-500">
                             {{ $comment->created_at->format('M d, Y \a\t g:i A') }}
                         </p>
 
-                        <!-- Tombol Aksi Moderasi -->
                         <div class="flex gap-4">
-                            <!-- Approve -->
                             @if($comment->status !== 'approved')
                                 <button 
                                     wire:click="approveComment({{ $comment->id }})"
@@ -210,7 +160,6 @@ new class extends Component
                                 </button>
                             @endif
 
-                            <!-- Spam -->
                             @if($comment->status !== 'spam')
                                 <button 
                                     wire:click="markAsSpam({{ $comment->id }})"
@@ -220,7 +169,6 @@ new class extends Component
                                 </button>
                             @endif
 
-                            <!-- Delete (Memanggil Alpine JS Modal) -->
                             <button 
                                 @click="commentIdToDelete = {{ $comment->id }}; showDeleteModal = true"
                                 class="text-sm text-rose-600 hover:text-rose-800 font-semibold transition-colors"
@@ -231,7 +179,6 @@ new class extends Component
                     </div>
                 </div>
             @empty
-                <!-- Tampilan jika tidak ada data -->
                 <div class="p-16 text-center text-sm text-zinc-400">
                     No comments found.
                 </div>
@@ -240,18 +187,15 @@ new class extends Component
         </div>
     </div>
 
-    <!-- Menampilkan navigasi halaman -->
     <div class="mt-6">
         {{ $comments->links() }}
     </div>
 
-    <!-- ALPINE JS DELETE CONFIRMATION MODAL -->
     <div 
         x-show="showDeleteModal" 
         style="display: none;" 
         class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6"
     >
-        <!-- Modal Backdrop -->
         <div 
             x-show="showDeleteModal" 
             x-transition:enter="ease-out duration-300"
@@ -264,7 +208,6 @@ new class extends Component
             class="fixed inset-0 bg-zinc-900/40 backdrop-blur-sm transition-opacity"
         ></div>
 
-        <!-- Modal Panel -->
         <div 
             x-show="showDeleteModal"
             x-transition:enter="ease-out duration-300"
@@ -277,13 +220,11 @@ new class extends Component
             class="relative w-full max-w-md bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-zinc-200 p-6 sm:p-8 transform transition-all"
         >
             <div class="flex items-start gap-4 sm:gap-5">
-                <!-- Icon Alert -->
                 <div class="flex-shrink-0 w-12 h-12 rounded-full bg-rose-50 border border-rose-100 flex items-center justify-center">
                     <svg class="w-6 h-6 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
                     </svg>
                 </div>
-                <!-- Konten Modal -->
                 <div class="flex-1 mt-1">
                     <h3 class="text-lg font-bold text-zinc-900 tracking-tight">Delete Comment</h3>
                     <p class="mt-2 text-sm text-zinc-500 leading-relaxed">
@@ -292,7 +233,6 @@ new class extends Component
                 </div>
             </div>
 
-            <!-- Tombol Aksi -->
             <div class="mt-8 flex justify-end gap-3">
                 <button 
                     type="button" 
@@ -303,7 +243,6 @@ new class extends Component
                 </button>
                 <button 
                     type="button" 
-                    {{-- Mengeksekusi fungsi PHP dari Alpine JS --}}
                     @click="$wire.deleteComment(commentIdToDelete); showDeleteModal = false"
                     class="px-5 py-2.5 bg-rose-600 border border-transparent rounded-xl text-sm font-semibold text-white shadow-md shadow-rose-500/20 hover:bg-rose-700 transition-colors focus:outline-none focus:ring-2 focus:ring-rose-500 focus:ring-offset-2"
                 >

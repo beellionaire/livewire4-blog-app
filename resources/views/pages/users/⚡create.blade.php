@@ -47,19 +47,15 @@ new class extends Component
 
 <div class="min-h-screen bg-white text-zinc-900 p-6 transition-colors duration-200">
     
-    <!-- Header Full Width -->
     <div class="mb-8 w-full">
         <h1 class="text-3xl font-extrabold tracking-tight text-zinc-900">Create New User</h1>
         <p class="mt-1 text-sm text-zinc-600">Add a new user to the system and assign their roles.</p>
     </div>
 
-    <!-- Form Container Full Width -->
     <div class="w-full bg-white rounded-3xl border border-zinc-200 p-6 sm:p-8 shadow-sm transition-all">
         <form wire:submit="save" class="space-y-8">
             
-            <!-- Grid Layout for Inputs -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <!-- Name -->
                 <div class="lg:col-span-2">
                     <label for="name" class="block text-sm font-semibold text-zinc-700 mb-2">
                         Name
@@ -80,7 +76,6 @@ new class extends Component
                     @enderror
                 </div>
 
-                <!-- Email -->
                 <div>
                     <label for="email" class="block text-sm font-semibold text-zinc-700 mb-2">
                         Email Address
@@ -100,7 +95,6 @@ new class extends Component
                     @enderror
                 </div>
 
-                <!-- Password -->
                 <div>
                     <label for="password" class="block text-sm font-semibold text-zinc-700 mb-2">
                         Password
@@ -121,16 +115,13 @@ new class extends Component
                 </div>
             </div>
 
-            <!-- Separator -->
             <hr class="border-zinc-100">
 
-            <!-- Roles (Responsive Full Width Grid) -->
             <div>
                 <label class="block text-sm font-semibold text-zinc-700 mb-4">
                     Assign Roles
                 </label>
                 
-                <!-- Grid berubah menjadi 3 atau 4 kolom di layar lebar agar rapi pada full-width -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                     @foreach($roles as $role)
                         <label class="relative flex cursor-pointer rounded-2xl border border-zinc-200 bg-zinc-50/50 p-4 shadow-sm hover:border-indigo-300 hover:bg-indigo-50/50 transition-colors focus-within:ring-2 focus-within:ring-indigo-500/20 group">
@@ -158,7 +149,6 @@ new class extends Component
                 @enderror
             </div>
 
-            <!-- Actions -->
             <div class="flex items-center justify-end gap-3 pt-4">
                 <a 
                     href="{{ route('users.index') }}" 

@@ -9,7 +9,6 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('posts', function (Blueprint $table) {
-            // Menambahkan kolom views_count dengan nilai default 0
             $table->unsignedBigInteger('views_count')->default(0)->after('content');
         });
     }
@@ -17,7 +16,6 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('posts', function (Blueprint $table) {
-            // Menghapus kolom jika dilakukan rollback
             $table->dropColumn('views_count');
         });
     }

@@ -15,13 +15,11 @@ new class extends Component
     {
         $query = User::with('roles')->latest();
 
-        // Filter by search
         if ($this->search) {
             $query->where('name', 'like', '%' . $this->search . '%')
                   ->orWhere('email', 'like', '%' . $this->search . '%');
         }
 
-        // Filter by role
         if ($this->roleFilter !== 'all') {
             $query->whereHas('roles', function ($q) {
                 $q->where('name', $this->roleFilter);
@@ -46,7 +44,6 @@ new class extends Component
 
     public function deleteUser(User $user): void
     {
-        // Prevent deleting yourself
         if ($user->id === auth()->id()) {
             session()->flash('error', 'You cannot delete your own account!');
             return;
@@ -58,7 +55,6 @@ new class extends Component
 };
 ?>
 
-{{-- Membungkus komponen dengan state Alpine.js --}}
 <div x-data="{ showDeleteModal: false, userIdToDelete: null }" class="min-h-screen bg-white text-zinc-900 p-6 transition-colors duration-200">
     
     <div class="mb-8">
@@ -66,7 +62,6 @@ new class extends Component
         <p class="mt-1 text-sm text-zinc-600">Manage user accounts and roles</p>
     </div>
 
-    <!-- Filters -->
     <div class="mb-6 bg-white rounded-2xl border border-zinc-200 p-5 shadow-sm transition-all">
         <div class="flex flex-col sm:flex-row gap-4">
             <div class="flex-1">
@@ -101,7 +96,6 @@ new class extends Component
         </div>
     </div>
 
-    <!-- Success/Error Messages -->
     @if (session('success'))
         <div class="mb-6 bg-emerald-50 border border-emerald-200 rounded-2xl p-4 shadow-sm" wire:transition>
             <p class="text-sm font-medium text-emerald-800 flex items-center gap-2">
@@ -120,7 +114,6 @@ new class extends Component
         </div>
     @endif
 
-    <!-- Users Table -->
     <div class="bg-white rounded-2xl border border-zinc-200 overflow-hidden shadow-sm transition-all">
         <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-zinc-200">
@@ -168,7 +161,6 @@ new class extends Component
                                     </a>
                                     
                                     @if($user->id !== auth()->id())
-                                        <!-- Tombol Delete yang memanggil fungsi Alpine.js -->
                                         <button 
                                             @click="userIdToDelete = {{ $user->id }}; showDeleteModal = true"
                                             class="text-rose-600 hover:text-rose-800 font-semibold transition-colors"
@@ -191,18 +183,15 @@ new class extends Component
         </div>
     </div>
 
-    <!-- Pagination -->
     <div class="mt-6">
         {{ $users->links() }}
     </div>
 
-    <!-- ALPINE JS DELETE CONFIRMATION MODAL -->
     <div 
         x-show="showDeleteModal" 
         style="display: none;" 
         class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6"
     >
-        <!-- Modal Backdrop (Glassmorphism Blur) -->
         <div 
             x-show="showDeleteModal" 
             x-transition:enter="ease-out duration-300"
@@ -215,7 +204,6 @@ new class extends Component
             class="fixed inset-0 bg-zinc-900/40 backdrop-blur-sm transition-opacity"
         ></div>
 
-        <!-- Modal Panel -->
         <div 
             x-show="showDeleteModal"
             x-transition:enter="ease-out duration-300"
@@ -228,13 +216,11 @@ new class extends Component
             class="relative w-full max-w-md bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-zinc-200 p-6 sm:p-8 transform transition-all"
         >
             <div class="flex items-start gap-4 sm:gap-5">
-                <!-- Icon Alert -->
                 <div class="flex-shrink-0 w-12 h-12 rounded-full bg-rose-50 border border-rose-100 flex items-center justify-center">
                     <svg class="w-6 h-6 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
                     </svg>
                 </div>
-                <!-- Konten Modal -->
                 <div class="flex-1 mt-1">
                     <h3 class="text-lg font-bold text-zinc-900 tracking-tight">Delete User</h3>
                     <p class="mt-2 text-sm text-zinc-500 leading-relaxed">
@@ -243,7 +229,6 @@ new class extends Component
                 </div>
             </div>
 
-            <!-- Tombol Aksi -->
             <div class="mt-8 flex justify-end gap-3">
                 <button 
                     type="button" 
@@ -254,7 +239,6 @@ new class extends Component
                 </button>
                 <button 
                     type="button" 
-                    {{-- $wire.deleteUser memanggil metode PHP Livewire langsung dari Alpine JS --}}
                     @click="$wire.deleteUser(userIdToDelete); showDeleteModal = false"
                     class="px-5 py-2.5 bg-rose-600 border border-transparent rounded-xl text-sm font-semibold text-white shadow-md shadow-rose-500/20 hover:bg-rose-700 transition-colors focus:outline-none focus:ring-2 focus:ring-rose-500 focus:ring-offset-2"
                 >

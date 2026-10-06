@@ -33,7 +33,6 @@ new class extends Component
     #[Validate('nullable|array')]
     public array $selectedTags = [];
 
-    // get the categories and tags
     public function with(): array
     {
         return [
@@ -64,7 +63,6 @@ new class extends Component
 
         $post->save();
 
-        // lampirkan kategori yang dipilih pengguna untuk postingan ini
         $post->categories()->attach($this->selectedCategories);
 
         if (!empty($this->selectedTags)) {
@@ -80,19 +78,15 @@ new class extends Component
 
 <div class="min-h-screen bg-white text-zinc-900 p-6 transition-colors duration-200">
     
-    <!-- Header Full Width -->
     <div class="mb-8 w-full">
         <h1 class="text-3xl font-extrabold tracking-tight text-zinc-900">Create New Post</h1>
         <p class="mt-1 text-sm text-zinc-600">Write, format, and publish your new blog post.</p>
     </div>
 
-    <!-- Form Container Full Width -->
     <div class="w-full bg-white rounded-3xl border border-zinc-200 p-6 sm:p-8 md:p-10 shadow-sm transition-all">
         <form wire:submit="save" class="space-y-10">
             
-            <!-- SECTION 1: BASIC INFO -->
             <div class="space-y-6">
-                <!-- Title -->
                 <div>
                     <label for="title" class="block text-sm font-semibold text-zinc-700 mb-2">
                         Post Title
@@ -113,7 +107,6 @@ new class extends Component
                     @enderror
                 </div>
 
-                <!-- Excerpt -->
                 <div>
                     <label for="excerpt" class="block text-sm font-semibold text-zinc-700 mb-2">
                         Excerpt <span class="text-zinc-400 font-normal ml-1">(Optional)</span>
@@ -135,14 +128,12 @@ new class extends Component
                 </div>
             </div>
 
-            <!-- SECTION 2: CONTENT (TRIX EDITOR) -->
             <div>
                 <label for="content" class="block text-sm font-semibold text-zinc-700 mb-2">
                     Main Content
                 </label>
                 <div wire:ignore class="relative rounded-xl overflow-hidden shadow-inner border border-zinc-200 bg-zinc-50 focus-within:ring-2 focus-within:ring-indigo-500/20 focus-within:border-indigo-500 transition-all">
                     <input type="hidden" name="content" id="x-content">
-                    {{-- Styling langsung pada trix-editor untuk matching dengan tema --}}
                     <trix-editor
                         input="x-content"
                         class="trix-content w-full border-0 bg-transparent text-zinc-900 text-sm min-h-[400px] p-4 focus:outline-none prose prose-indigo max-w-none"
@@ -161,7 +152,6 @@ new class extends Component
 
             <hr class="border-zinc-100">
 
-            <!-- SECTION 3: MEDIA -->
             <div>
                 <label class="block text-sm font-semibold text-zinc-700 mb-3">
                     Featured Image
@@ -191,7 +181,6 @@ new class extends Component
                         @enderror
                     </div>
 
-                    <!-- Image Preview -->
                     @if ($featured_image)
                         <div class="relative flex-shrink-0" wire:transition>
                             <img src="{{ $featured_image->temporaryUrl() }}" class="h-32 w-48 object-cover rounded-2xl border border-zinc-200 shadow-sm" alt="Featured Image Preview">
@@ -203,10 +192,8 @@ new class extends Component
 
             <hr class="border-zinc-100">
 
-            <!-- SECTION 4: TAXONOMIES -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-8">
                 
-                <!-- Categories (Grid Cards) -->
                 <div>
                     <label class="block text-sm font-semibold text-zinc-700 mb-3">
                         Categories <span class="text-rose-500">*</span>
@@ -238,7 +225,6 @@ new class extends Component
                     @enderror
                 </div>
 
-                <!-- Tags (Grid Cards) -->
                 <div>
                     <label class="block text-sm font-semibold text-zinc-700 mb-3">
                         Tags <span class="text-zinc-400 font-normal ml-1">(Optional)</span>
@@ -269,14 +255,12 @@ new class extends Component
 
             <hr class="border-zinc-100">
 
-            <!-- SECTION 5: PUBLISH STATUS -->
             <div>
                 <label class="block text-sm font-semibold text-zinc-700 mb-4">
                     Publication Status
                 </label>
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                     
-                    <!-- Draft Option -->
                     <label class="relative flex cursor-pointer rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm hover:border-indigo-300 hover:bg-indigo-50/30 transition-all focus-within:ring-2 focus-within:ring-indigo-500/20 group has-[:checked]:border-indigo-600 has-[:checked]:bg-indigo-50/50 has-[:checked]:ring-1 has-[:checked]:ring-indigo-600">
                         <div class="flex h-5 items-center mt-0.5">
                             <input 
@@ -292,7 +276,6 @@ new class extends Component
                         </div>
                     </label>
                     
-                    <!-- Published Option -->
                     @can('publish posts')
                     <label class="relative flex cursor-pointer rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm hover:border-indigo-300 hover:bg-indigo-50/30 transition-all focus-within:ring-2 focus-within:ring-indigo-500/20 group has-[:checked]:border-emerald-500 has-[:checked]:bg-emerald-50/50 has-[:checked]:ring-1 has-[:checked]:ring-emerald-500">
                         <div class="flex h-5 items-center mt-0.5">
@@ -319,7 +302,6 @@ new class extends Component
                 @enderror
             </div>
 
-            <!-- Actions -->
             <div class="flex items-center justify-end gap-3 pt-6 mt-6 border-t border-zinc-100">
                 <a 
                     href="{{ route('posts.index') }}" 

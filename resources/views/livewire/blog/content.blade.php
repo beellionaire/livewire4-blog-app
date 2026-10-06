@@ -1,12 +1,9 @@
-            <!-- POSTS GRID -->
             <div class="lg:col-span-3">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                     @forelse($posts as $post)
-                        <!-- Post Card (Modern SaaS Minimalist Style) -->
                         <article wire:key="post-{{ $post->id }}"
                             class="group flex flex-col bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200/80 dark:border-zinc-800/80 overflow-hidden shadow-[0_4px_20px_rgb(0,0,0,0.03)] dark:shadow-none hover:shadow-[0_12px_30px_rgb(0,0,0,0.06)] hover:-translate-y-1.5 transition-all duration-300 ease-out">
                             
-                            <!-- Thumbnail Cover -->
                             <a href="{{ route('blog.show', $post->slug) }}" wire:navigate class="relative h-60 overflow-hidden bg-zinc-100 dark:bg-zinc-800/50 block">
                                 @if($post->featured_image)
                                     <img src="{{ Storage::url($post->featured_image) }}" alt="{{ $post->title }}"
@@ -17,7 +14,6 @@
                                     </div>
                                 @endif
 
-                                <!-- Glassmorphism Badge (Category / Indicator) -->
                                 @if($post->category)
                                     <div class="absolute top-4 left-4">
                                         <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md text-zinc-800 dark:text-zinc-200 border border-white/20 shadow-sm">
@@ -27,9 +23,7 @@
                                 @endif
                             </a>
 
-                            <!-- Card Content -->
                             <div class="p-6 sm:p-7 flex flex-col flex-grow">
-                                <!-- Meta Data (Date, Author, Views) -->
                                 <div class="flex items-center text-xs font-medium text-zinc-400 dark:text-zinc-500 mb-3.5 gap-2.5">
                                     <time datetime="{{ $post->published_at->format('Y-m-d') }}">{{ $post->published_at->format('M d, Y') }}</time>
                                     <span class="w-1 h-1 rounded-full bg-zinc-300 dark:bg-zinc-700"></span>
@@ -44,21 +38,18 @@
                                     @endif
                                 </div>
 
-                                <!-- Title -->
                                 <h2 class="text-xl font-semibold text-zinc-900 dark:text-white mb-3 line-clamp-2 tracking-tight group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
                                     <a href="{{ route('blog.show', $post->slug) }}" wire:navigate>
                                         {{ $post->title }}
                                     </a>
                                 </h2>
 
-                                <!-- Excerpt -->
                                 @if($post->excerpt)
                                     <p class="text-zinc-500 dark:text-zinc-400 text-sm leading-relaxed mb-6 line-clamp-3 flex-grow font-normal">
                                         {{ $post->excerpt }}
                                     </p>
                                 @endif
 
-                                <!-- Read More Action -->
                                 <div class="mt-auto pt-4 border-t border-zinc-100 dark:border-zinc-800/60 flex items-center justify-between">
                                     <span class="inline-flex items-center text-xs font-semibold text-indigo-600 dark:text-indigo-400 group-hover:text-indigo-700 dark:group-hover:text-indigo-300 transition-colors">
                                         Read article 
@@ -68,7 +59,6 @@
                             </div>
                         </article>
                     @empty
-                        <!-- Empty State (Minimalist) -->
                         <div class="col-span-full flex flex-col items-center justify-center p-16 bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800/80 rounded-2xl text-center shadow-sm">
                             <div class="w-12 h-12 rounded-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-zinc-400 dark:text-zinc-500 mb-4">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
@@ -79,7 +69,6 @@
                     @endforelse
                 </div>
 
-                <!-- Pagination -->
                 <div class="mt-12">
                     {{ $posts->links() }}
                 </div>

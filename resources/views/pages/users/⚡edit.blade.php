@@ -72,19 +72,15 @@ new class extends Component
 
 <div class="min-h-screen bg-white text-zinc-900 p-6 transition-colors duration-200">
     
-    <!-- Header Full Width -->
     <div class="mb-8 w-full">
         <h1 class="text-3xl font-extrabold tracking-tight text-zinc-900">Edit User</h1>
         <p class="mt-1 text-sm text-zinc-600">Update user information and assign their roles.</p>
     </div>
 
-    <!-- Form Container Full Width -->
     <div class="w-full bg-white rounded-3xl border border-zinc-200 p-6 sm:p-8 shadow-sm transition-all">
         <form wire:submit="update" class="space-y-8">
             
-            <!-- Grid Layout for Inputs -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <!-- Name -->
                 <div class="lg:col-span-2">
                     <label for="name" class="block text-sm font-semibold text-zinc-700 mb-2">
                         Name
@@ -103,7 +99,6 @@ new class extends Component
                     @enderror
                 </div>
 
-                <!-- Email -->
                 <div>
                     <label for="email" class="block text-sm font-semibold text-zinc-700 mb-2">
                         Email Address
@@ -122,7 +117,6 @@ new class extends Component
                     @enderror
                 </div>
 
-                <!-- Password -->
                 <div>
                     <label for="password" class="block text-sm font-semibold text-zinc-700 mb-2">
                         New Password
@@ -144,10 +138,8 @@ new class extends Component
                 </div>
             </div>
 
-            <!-- Separator -->
             <hr class="border-zinc-100">
 
-            <!-- Roles (Responsive Full Width Grid) -->
             <div>
                 <label class="block text-sm font-semibold text-zinc-700 mb-4">
                     Assign Roles
@@ -180,7 +172,6 @@ new class extends Component
                 @enderror
             </div>
 
-            <!-- Actions -->
             <div class="flex items-center justify-end gap-3 pt-4">
                 <a 
                     href="{{ route('users.index') }}" 

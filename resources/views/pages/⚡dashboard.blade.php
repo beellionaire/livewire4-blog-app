@@ -14,11 +14,9 @@ new class extends Component {
         $user = auth()->user();
         $isAdmin = $user->hasRole('admin') || $user->hasRole('editor');
 
-        // base query filters by author if not admin
         $postsQuery = $isAdmin ? Post::query()
             : Post::where('user_id', $user->id);
 
-        // calculate stats
         $stats = [
             'total_posts' => (clone $postsQuery)->count(),
             'published_posts' => (clone $postsQuery)->where('status', 'published')->count(),
@@ -30,14 +28,12 @@ new class extends Component {
             'total_users' => $isAdmin ? User::count() : null,
         ];
 
-        // Most viewed posts
         $mostViewedPosts = (clone $postsQuery)
             ->where('status', 'published')
             ->orderBy('views_count', 'desc')
             ->take(5)
             ->get();
 
-        // recent comments
         $recentComments = Comment::with(['user', 'post'])
             ->when(!$isAdmin, function ($q) use ($user) {
                 $q->whereHas('post', function ($query) use ($user) {
@@ -48,7 +44,6 @@ new class extends Component {
             ->take(5)
             ->get();
 
-        // Views over last 7 days
         $RawviewsData = PostView::select(
                 DB::raw('DATE(viewed_at) as date'),
                 DB::raw('COUNT(*) as count')
@@ -62,9 +57,7 @@ new class extends Component {
             ->groupBy('date')
             ->orderBy('date')
             ->get()
-            ->keyBy('date'); //easy for lookup
-
-            // fill in missing dates with 0 - EXACTLY like a last seven overview
+            ->keyBy('date'); 
             
         $viewsData = collect();
             for ($i=6; $i >= 0; $i--) { 
@@ -84,7 +77,6 @@ new class extends Component {
 ?>
 
 <div class="space-y-8 pb-12">
-    <!-- Header Section -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2">
         <div>
             <h1 class="text-2xl sm:text-3xl font-bold text-zinc-900 dark:text-white tracking-tight">Dashboard</h1>
@@ -98,10 +90,8 @@ new class extends Component {
         </a>
     </div>
     
-    <!-- Stats Grid -->
     @island
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <!-- Total Posts-->
         <div class="bg-white/70 dark:bg-zinc-900/70 backdrop-blur-xl rounded-2xl border border-zinc-200/80 dark:border-zinc-800/80 p-6 shadow-[0_4px_20px_rgb(0,0,0,0.03)] transition-all">
             <div class="flex items-center justify-between">
                 <div>
@@ -123,7 +113,6 @@ new class extends Component {
             </div>
         </div>
 
-        <!-- Total Views -->
         <div class="bg-white/70 dark:bg-zinc-900/70 backdrop-blur-xl rounded-2xl border border-zinc-200/80 dark:border-zinc-800/80 p-6 shadow-[0_4px_20px_rgb(0,0,0,0.03)] transition-all">
             <div class="flex items-center justify-between">
                 <div>
@@ -143,7 +132,6 @@ new class extends Component {
             <p class="mt-4 text-xs font-medium text-zinc-500 dark:text-zinc-400 pt-3 border-t border-zinc-100 dark:border-zinc-800/60">Across all posts</p>
         </div>
 
-        <!-- Total Comments -->
         <div class="bg-white/70 dark:bg-zinc-900/70 backdrop-blur-xl rounded-2xl border border-zinc-200/80 dark:border-zinc-800/80 p-6 shadow-[0_4px_20px_rgb(0,0,0,0.03)] transition-all">
             <div class="flex items-center justify-between">
                 <div>
@@ -161,7 +149,6 @@ new class extends Component {
             <p class="mt-4 text-xs font-medium text-zinc-500 dark:text-zinc-400 pt-3 border-t border-zinc-100 dark:border-zinc-800/60">Engagement from readers</p>
         </div>
 
-        <!-- Total Users -->
         @if($isAdmin)
             <div class="bg-white/70 dark:bg-zinc-900/70 backdrop-blur-xl rounded-2xl border border-zinc-200/80 dark:border-zinc-800/80 p-6 shadow-[0_4px_20px_rgb(0,0,0,0.03)] transition-all">
                 <div class="flex items-center justify-between">
@@ -183,9 +170,7 @@ new class extends Component {
     </div>
     @endisland
 
-    <!-- Charts & Most Viewed Row -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <!-- Views Chart -->
         <div class="bg-white/70 dark:bg-zinc-900/70 backdrop-blur-xl rounded-2xl border border-zinc-200/80 dark:border-zinc-800/80 p-6 shadow-[0_4px_20px_rgb(0,0,0,0.03)] transition-all">
             <h2 class="text-base font-bold text-zinc-900 dark:text-white mb-4 tracking-tight">Views Last 7 Days</h2>
             <div class="h-64 w-full">
@@ -193,7 +178,6 @@ new class extends Component {
             </div>
         </div>
 
-        <!-- Most Viewed Posts -->
         <div class="bg-white/70 dark:bg-zinc-900/70 backdrop-blur-xl rounded-2xl border border-zinc-200/80 dark:border-zinc-800/80 p-6 shadow-[0_4px_20px_rgb(0,0,0,0.03)] transition-all flex flex-col">
             <h2 class="text-base font-bold text-zinc-900 dark:text-white mb-4 tracking-tight">Most Viewed Posts</h2>
             <div class="space-y-3.5 flex-1 flex flex-col justify-between">
@@ -218,7 +202,6 @@ new class extends Component {
         </div>
     </div>
 
-    <!-- Recent Comments Section -->
     <div class="bg-white/70 dark:bg-zinc-900/70 backdrop-blur-xl rounded-2xl border border-zinc-200/80 dark:border-zinc-800/80 p-6 shadow-[0_4px_20px_rgb(0,0,0,0.03)] transition-all">
         <h2 class="text-base font-bold text-zinc-900 dark:text-white mb-4 tracking-tight">Recent Comments</h2>
         <div class="space-y-4">
@@ -247,9 +230,7 @@ new class extends Component {
         </div>
     </div>
 
-    <!-- Chart.js Script -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-    <!-- Pass data via data attributes -->
     <div 
         id="viewsChartData"
         data-labels='@json($viewsData->pluck('date')->toArray())'
@@ -262,7 +243,6 @@ new class extends Component {
             const ctx = document.getElementById('viewsChart');
             const chartDataEl = document.getElementById('viewsChartData');
 
-            // read data from data attributes
             const labels = JSON.parse(chartDataEl.dataset.labels);
             const data = JSON.parse(chartDataEl.dataset.counts);
 

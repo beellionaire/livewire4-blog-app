@@ -62,7 +62,6 @@ new class extends Component {
         <p class="mt-1 text-sm text-zinc-600">Manage your blog posts</p>
     </div>
 
-    {{-- filters --}}
     <div class="mb-6 bg-white rounded-2xl border border-zinc-200 p-5 shadow-sm transition-all">
         <div class="flex flex-col sm:flex-row gap-4">
             <div class="flex-1">
@@ -94,7 +93,6 @@ new class extends Component {
         </div>
     </div>
 
-    {{-- Success Message --}}
     @if (session('success'))
         <div class="mb-6 bg-emerald-50 border border-emerald-200 rounded-2xl p-4 shadow-sm" wire:transition>
             <p class="text-sm font-medium text-emerald-800 flex items-center gap-2">
@@ -104,7 +102,6 @@ new class extends Component {
         </div>
     @endif
 
-    {{-- posts table --}}
     <div class="bg-white rounded-2xl border border-zinc-200 overflow-hidden shadow-sm transition-all">
         <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-zinc-200">
@@ -209,7 +206,6 @@ new class extends Component {
             </table>
         </div>
     </div>
-    {{-- pagination --}}
     <div class="mt-6">
         {{ $posts->links() }}
     </div>

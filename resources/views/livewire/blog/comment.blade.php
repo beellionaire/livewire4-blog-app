@@ -1,6 +1,5 @@
 <div class="mt-12 border-t border-zinc-200/80 dark:border-zinc-800/80 pt-10">
     
-    <!-- HEADER KOMENTAR -->
     <div class="flex items-center justify-between mb-8">
         <h2 class="text-2xl font-bold text-zinc-900 dark:text-zinc-100 tracking-tight flex items-center gap-3">
             Comments 
@@ -10,7 +9,6 @@
         </h2>
     </div>
 
-    <!-- NOTIFIKASI SUKSES (FLASH MESSAGE) -->
     @if (session('comment-success'))
         <div class="mb-6 bg-emerald-500/10 border border-emerald-500/20 backdrop-blur-xl rounded-2xl p-4 shadow-sm" wire:transition>
             <p class="text-sm font-medium text-emerald-800 dark:text-emerald-300 flex items-center gap-2">
@@ -20,7 +18,6 @@
         </div>
     @endif
 
-    <!-- FORM KOMENTAR UTAMA (BARU) -->
     @auth
         <div class="mb-10 bg-white/70 dark:bg-zinc-900/70 backdrop-blur-xl rounded-3xl p-6 sm:p-8 border border-zinc-200/80 dark:border-zinc-800/80 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none transition-all">
             <h3 class="text-lg font-semibold text-zinc-900 dark:text-zinc-100 mb-4 tracking-tight">Leave a comment</h3>
@@ -53,12 +50,10 @@
         </div>
     @endauth
 
-    <!-- DAFTAR KOMENTAR -->
     <div class="space-y-6">
         @forelse($comments as $comment)
             <div class="bg-white/70 dark:bg-zinc-900/70 backdrop-blur-xl rounded-2xl border border-zinc-200/80 dark:border-zinc-800/80 p-6 sm:p-7 shadow-[0_4px_20px_rgb(0,0,0,0.03)] transition-all">
                 
-                <!-- BAGIAN HEADER KOMENTAR (FOTO, NAMA, WAKTU) -->
                 <div class="flex items-start justify-between mb-4">
                     <div class="flex items-center gap-3">
                         <img 
@@ -73,12 +68,10 @@
                     </div>
                 </div>
 
-                <!-- ISI/TEKS KOMENTAR -->
                 <div class="text-zinc-700 dark:text-zinc-300 text-sm sm:text-base leading-relaxed mb-4 pl-1">
                     {{ $comment->content }}
                 </div>
 
-                <!-- TOMBOL AKSI (REPLY / CANCEL) -->
                 <div class="flex items-center gap-4 pl-1">
                     @auth
                         @if($replyingTo === $comment->id)
@@ -94,7 +87,6 @@
                     @endauth
                 </div>
 
-                <!-- FORM BALASAN (REPLY FORM) -->
                 @if($replyingTo === $comment->id)
                     <div class="mt-4 bg-zinc-50/80 dark:bg-zinc-950/60 backdrop-blur-md rounded-2xl p-4 sm:p-5 border border-zinc-200/80 dark:border-zinc-800/80 transition-all" wire:transition>
                         <form wire:submit="postReply({{ $comment->id }})">
@@ -121,7 +113,6 @@
                     </div>
                 @endif
 
-                <!-- DAFTAR BALASAN (NESTED REPLIES) -->
                 @if($comment->replies->count() > 0)
                     <div class="mt-5 ml-4 sm:ml-6 space-y-3 border-l-2 border-indigo-500/20 dark:border-indigo-500/30 pl-4 sm:pl-6">
                         @foreach($comment->replies as $reply)

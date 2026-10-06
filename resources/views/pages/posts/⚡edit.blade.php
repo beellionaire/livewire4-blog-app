@@ -107,19 +107,15 @@ new class extends Component
 
 <div class="min-h-screen bg-white text-zinc-900 p-6 transition-colors duration-200">
     
-    <!-- Header Full Width -->
     <div class="mb-8 w-full">
         <h1 class="text-3xl font-extrabold tracking-tight text-zinc-900">Edit Post</h1>
         <p class="mt-1 text-sm text-zinc-600">Update and refine your blog post.</p>
     </div>
 
-    <!-- Form Container Full Width -->
     <div class="w-full bg-white rounded-3xl border border-zinc-200 p-6 sm:p-8 md:p-10 shadow-sm transition-all">
         <form wire:submit="update" class="space-y-10">
             
-            <!-- SECTION 1: BASIC INFO -->
             <div class="space-y-6">
-                <!-- Title -->
                 <div>
                     <label for="title" class="block text-sm font-semibold text-zinc-700 mb-2">
                         Post Title
@@ -139,7 +135,6 @@ new class extends Component
                     @enderror
                 </div>
 
-                <!-- Excerpt -->
                 <div>
                     <label for="excerpt" class="block text-sm font-semibold text-zinc-700 mb-2">
                         Excerpt <span class="text-zinc-400 font-normal ml-1">(Optional)</span>
@@ -160,7 +155,6 @@ new class extends Component
                 </div>
             </div>
 
-            <!-- SECTION 2: CONTENT (TRIX EDITOR DENGAN ALPINE JS) -->
             <div>
                 <label for="content" class="block text-sm font-semibold text-zinc-700 mb-2">
                     Main Content
@@ -196,14 +190,12 @@ new class extends Component
 
             <hr class="border-zinc-100">
 
-            <!-- SECTION 3: MEDIA -->
             <div>
                 <label class="block text-sm font-semibold text-zinc-700 mb-3">
                     Featured Image
                 </label>
                 
                 <div class="flex flex-col md:flex-row items-start gap-8">
-                    <!-- Current Image Preview -->
                     @if ($existing_image && !$featured_image)
                         <div class="flex-shrink-0">
                             <p class="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2">Current Image</p>
@@ -214,7 +206,6 @@ new class extends Component
                         </div>
                     @endif
                     
-                    <!-- File Uploader -->
                     <div class="flex-1 w-full">
                         <p class="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2">Upload New Image</p>
                         <input 
@@ -240,7 +231,6 @@ new class extends Component
                         @enderror
                     </div>
 
-                    <!-- New Image Preview -->
                     @if ($featured_image)
                         <div class="flex-shrink-0" wire:transition>
                             <p class="text-xs font-semibold text-indigo-500 uppercase tracking-wider mb-2">New Image Preview</p>
@@ -255,10 +245,8 @@ new class extends Component
 
             <hr class="border-zinc-100">
 
-            <!-- SECTION 4: TAXONOMIES -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-8">
                 
-                <!-- Categories -->
                 <div>
                     <label class="block text-sm font-semibold text-zinc-700 mb-3">
                         Categories <span class="text-rose-500">*</span>
@@ -290,7 +278,6 @@ new class extends Component
                     @enderror
                 </div>
 
-                <!-- Tags -->
                 <div>
                     <label class="block text-sm font-semibold text-zinc-700 mb-3">
                         Tags <span class="text-zinc-400 font-normal ml-1">(Optional)</span>
@@ -320,14 +307,12 @@ new class extends Component
 
             <hr class="border-zinc-100">
 
-            <!-- SECTION 5: PUBLISH STATUS -->
             <div>
                 <label class="block text-sm font-semibold text-zinc-700 mb-4">
                     Publication Status
                 </label>
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                     
-                    <!-- Draft Option -->
                     <label class="relative flex cursor-pointer rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm hover:border-indigo-300 hover:bg-indigo-50/30 transition-all focus-within:ring-2 focus-within:ring-indigo-500/20 group has-[:checked]:border-indigo-600 has-[:checked]:bg-indigo-50/50 has-[:checked]:ring-1 has-[:checked]:ring-indigo-600">
                         <div class="flex h-5 items-center mt-0.5">
                             <input 
@@ -344,7 +329,6 @@ new class extends Component
                     </label>
                     
                     @can('publish posts')
-                    <!-- Published Option -->
                     <label class="relative flex cursor-pointer rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm hover:border-indigo-300 hover:bg-indigo-50/30 transition-all focus-within:ring-2 focus-within:ring-indigo-500/20 group has-[:checked]:border-emerald-500 has-[:checked]:bg-emerald-50/50 has-[:checked]:ring-1 has-[:checked]:ring-emerald-500">
                         <div class="flex h-5 items-center mt-0.5">
                             <input 
@@ -360,7 +344,6 @@ new class extends Component
                         </div>
                     </label>
 
-                    <!-- Archived Option -->
                     <label class="relative flex cursor-pointer rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm hover:border-indigo-300 hover:bg-indigo-50/30 transition-all focus-within:ring-2 focus-within:ring-indigo-500/20 group has-[:checked]:border-slate-500 has-[:checked]:bg-slate-50/50 has-[:checked]:ring-1 has-[:checked]:ring-slate-500">
                         <div class="flex h-5 items-center mt-0.5">
                             <input 
@@ -386,7 +369,6 @@ new class extends Component
                 @enderror
             </div>
 
-            <!-- Actions -->
             <div class="flex items-center justify-end gap-3 pt-6 mt-6 border-t border-zinc-100">
                 <a 
                     href="{{ route('posts.index') }}" 

@@ -15,7 +15,6 @@ class Category extends Model
         'color',
     ];
 
-    // relasi many to many
     public function posts(): BelongsToMany
     {
         return $this->belongsToMany(Post::class);
