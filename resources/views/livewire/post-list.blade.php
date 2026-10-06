@@ -6,6 +6,7 @@
             <p class="mt-2 text-lg text-gray-600">Thoughts, ideas, and stories from our team</p>
         </div>
 
+
         <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
             <!-- Sidebar -->
             <aside class="lg:col-span-1">
@@ -123,6 +124,11 @@
         <!-- Pagination -->
         <div class="mt-8">
             {{ $posts->links() }}
+        </div>
+
+        <!-- subscribe section -->
+        <div class="mt-12">
+            <livewire:blog.subscriber/>
         </div>
     </div>
 </div>

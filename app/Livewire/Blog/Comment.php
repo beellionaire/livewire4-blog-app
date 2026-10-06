@@ -58,7 +58,7 @@ class Comment extends Component
         $this->validate(['newComment' => 'required|string|min:3|max:1000']);
 
         // Menyimpan data komentar utama ke database
-        ModelsComment::create([
+        $comment = ModelsComment::create([
             'post_id' => $this->post->id,
             'user_id' => auth()->id(),
             'content' => $this->newComment,
@@ -67,6 +67,11 @@ class Comment extends Component
 
         // Mengosongkan form input setelah berhasil
         $this->newComment = '';
+
+        // tambahkan notifikasi disini
+        if ($this->post->user_id !== auth()->id()) {
+            $this->post->user->notify(new \App\Notifications\NewCommentNotification($comment));
+        }
 
         // Memancarkan sinyal (event) 'comment-posted' ke aplikasi.
         // Tujuannya agar fungsi render() memuat ulang daftar komentar secara instan.
@@ -112,7 +117,7 @@ class Comment extends Component
         $this->validate(['replyContent' => 'required|string|min:3|max:1000']);
 
         // Menyimpan balasan ke database
-        ModelsComment::create([
+        $comment = ModelsComment::create([
             'post_id' => $this->post->id,
             'user_id' => auth()->id(),
             'parent_id' => $parentId, // Ini membedakan balasan dengan komentar utama
@@ -123,6 +128,11 @@ class Comment extends Component
         // Menutup form dan mengosongkan isi input balasan
         $this->replyingTo = null;
         $this->replyContent = '';
+
+        // notify post author
+        if ($this->post->user_id !== auth()->id()) {
+            $this->post->user->notify(new \App\Notifications\NewCommentNotification($comment));
+        }
 
         // Memancarkan sinyal agar tampilan dirender ulang
         $this->dispatch('comment-posted');

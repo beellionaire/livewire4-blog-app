@@ -1,15 +1,28 @@
 <?php
 
 use App\Livewire\PostList;
-use GuzzleHttp\Middleware;
+use App\Models\Subscriber;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function() {
-    return redirect('/blog');
+    return redirect()->route('blog.index');
 })->name('home');
 
 Route::get('/blog', PostList::class)->name('blog.index');
 Route::livewire('/blog/{slug}', 'pages::posts.show')->name('blog.show');
+
+Route::get('/unsubscribe/{token}', function($token) {
+    $subscriber = Subscriber::where('token', $token)->firstOrFail();
+
+    if ($subscriber) {
+        $subscriber->delete();
+        return view('unsubscribed');
+    } 
+
+    abort('404');
+
+})->name('unsubscribed');
+
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::livewire('dashboard', 'pages::dashboard')->name('dashboard');
@@ -33,7 +46,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::livewire('/{category}/edit', 'pages::category.edit')->name('edit');
     });
 
-    Route::livewire('/', 'pages::comments.index')->middleware('can:manage roles')->name('comments.index');
+    Route::livewire('/comments', 'pages::comments.index')->middleware('can:manage roles')->name('comments.index');
    
     
 });
