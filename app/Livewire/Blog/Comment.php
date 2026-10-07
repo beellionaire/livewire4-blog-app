@@ -5,6 +5,7 @@ namespace App\Livewire\Blog;
 use App\Models\Comment as ModelsComment;
 use App\Models\Post;
 use App\Notifications\NewCommentNotification;
+use Illuminate\Support\Facades\Notification;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
@@ -44,7 +45,7 @@ class Comment extends Component
         $this->newComment = '';
 
         if ($this->post->user_id !== auth()->id()) {
-            $this->post->user->notify(new NewCommentNotification($comment));
+            Notification::send($this->post->user, new NewCommentNotification($comment));
         }
 
         $this->dispatch('comment-posted');
@@ -88,7 +89,7 @@ class Comment extends Component
         $this->replyContent = '';
 
         if ($this->post->user_id !== auth()->id()) {
-            $this->post->user->notify(new NewCommentNotification($comment));
+            Notification::send($this->post->user, new NewCommentNotification($comment));
         }
 
         $this->dispatch('comment-posted');

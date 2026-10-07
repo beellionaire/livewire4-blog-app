@@ -20,7 +20,7 @@ Route::get('/unsubscribe/{token}', function ($token) {
         return view('unsubscribed');
     }
 
-    abort('404');
+    abort(404);
 
 })->name('unsubscribed');
 
