@@ -127,10 +127,11 @@ php artisan serve
 
 <div align="center">
   <img src="assets/preview.png" width="800" alt="Dashboard Preview">
+  <img src="assets/preview2.png" width="800" alt="Dashboard Preview">
 </div>
 
 ---
 
 ## 📄 Lisensi
 
-Proyek ini bersifat open-source 
+Proyek ini bersifat open-source
